@@ -1076,6 +1076,7 @@
                                 <th style="text-align: center;">Cant.</th>
                                 <th>Protocolos / Comunicación</th>
                                 <th>Descripción Operativa en Planta</th>
+                                <th>Recomendación SUPCON</th>
                                 <th>Etiquetas en Plano (Tags)</th>
                             </tr>
                         </thead>
@@ -1385,6 +1386,56 @@ SUPCON Chile</div>
 
         // On Load
         document.addEventListener("DOMContentLoaded", () => {
+            // Add SUPCON recommendations to rawInventory dynamically based on SUPCON Skills
+            rawInventory.forEach(item => {
+                if (item.cat === 'PLC') {
+                    if (item.name.includes('M580') || item.name.includes('H9') || item.name.includes('Combustibles') || item.name.includes('Alimentación')) {
+                        item.recom = 'SUPCON UCS Nyx (Controlador virtual redundante N:1 sobre NyxOS)';
+                    } else if (item.name.includes('Quantum')) {
+                        item.recom = 'DCS SUPCON ECS-700 (Migración con tarjeta AI721-S de 300ms)';
+                    } else {
+                        item.recom = 'DCS SUPCON ECS-700 (Reemplazo y unificación centralizada)';
+                    }
+                } else if (item.cat === 'Instrumento') {
+                    if (item.name.includes('Coriolis')) {
+                        item.recom = 'Coriolis SUPCON SFC (Modbus TCP nativo, precisión ±0.1%)';
+                    } else if (item.name.includes('Big Blaster')) {
+                        item.recom = 'Control discreto mediante salidas DO711-S de ECS-700';
+                    } else if (item.name.includes('TeSys T') || item.name.includes('Pfister') || item.name.includes('Schenck')) {
+                        item.recom = 'Integración a DCS ECS-700 via Profibus DP maestra';
+                    } else {
+                        item.recom = 'Integración nativa a plataforma central supOS';
+                    }
+                } else if (item.cat === 'Gateway') {
+                    if (item.name.includes('Link150')) {
+                        item.recom = 'Eliminado (Reemplazado por Coriolis SFC con puerto Ethernet)';
+                    } else if (item.name.includes('eX80') || item.name.includes('X80') || item.name.includes('CRA') || item.name.includes('CRP')) {
+                        item.recom = 'Reemplazado por RIO redundante ECS-700 o E/S APL SmartEIO (UCS Nyx)';
+                    } else if (item.name.includes('TCSEGPA')) {
+                        item.recom = 'Eliminado (Conexión Profibus directa a tarjeta en DCS ECS-700)';
+                    } else {
+                        item.recom = 'Módulo de E/S / RIO redundante de DCS ECS-700';
+                    }
+                } else if (item.cat === 'Servidor') {
+                    if (item.name.includes('PXP')) {
+                        item.recom = 'Reemplazado por Suite SUPCON APC-Cement (MPC/RTO) en supOS';
+                    } else if (item.name.includes('PI') || item.name.includes('SCADA') || item.name.includes('QCX')) {
+                        item.recom = 'Integración nativa en supOS (Mantenimiento predictivo con PRIDE)';
+                    } else {
+                        item.recom = 'Integración en supOS / HMI Nyx con soporte XR';
+                    }
+                } else if (item.cat === 'Switch') {
+                    if (item.name.includes('Core') || item.name.includes('SF300')) {
+                        item.recom = 'Switch Core Redundante SUPCON (Serie IKS)';
+                    } else if (item.name.includes('DRS') || item.name.includes('EDS') || item.name.includes('SFN')) {
+                        item.recom = 'Switch Industrial Gestionado SUPCON (Anillo redundante <20ms)';
+                    } else if (item.name.includes('Conversor')) {
+                        item.recom = 'Eliminado (Conexión directa a puertos SFP en switches SUPCON)';
+                    } else {
+                        item.recom = 'Switch Gestionado SUPCON (Configuración de VLANs y QoS)';
+                    }
+                }
+            });
             renderTable(rawInventory);
         });
 
@@ -1429,6 +1480,7 @@ SUPCON Chile</div>
                     <td class="qty-cell">${item.qty}</td>
                     <td style="font-family: 'Courier New', Courier; font-size:12.5px;">${item.proto}</td>
                     <td>${item.desc}</td>
+                    <td style="color: var(--accent-green); font-weight: 600;">${item.recom || 'Integración Directa'}</td>
                     <td><div class="tag-list">${tagsHtml}</div></td>
                 `;
                 tbody.appendChild(tr);
@@ -1492,115 +1544,115 @@ SUPCON Chile</div>
         const nodeDetails = {
             'sw-core-moxa': {
                 title: 'Switch Core Modular Moxa (IKS-6726A)',
-                mfr: 'Moxa',
-                proto: 'Gigabit Ethernet, F.O. (SFP), RSTP, VLAN, SNMP',
-                qty: '2 unidades físicas redundantes',
-                desc: 'Switches troncales redundantes ubicados en la Sala de Servidores. Concentran los anillos de FO de toda la planta y enlazan con el Core de red comercial. Soporta topologías en anillo Turbo Ring/Turbo Chain con tiempos de recuperación < 20 ms.',
-                action: 'SUPCON puede integrar estos switches core en su arquitectura y proponer módulos SFP de repuesto o modernización de la capa de distribución.'
+                mfr: 'Moxa / Reemplazo Recomendado: SUPCON IKS Core Series',
+                proto: 'Gigabit Ethernet, F.O. (SFP), RSTP, VLAN, SNMP, G3 Conformal Coating',
+                qty: '2 unidades físicas redundantes en Core',
+                desc: 'Switches troncales redundantes ubicados en la Sala de Servidores. Concentran los anillos de FO de toda la planta y enlazan con el Core de red comercial. Soportan topologías en anillo Turbo Ring/Turbo Chain con tiempos de recuperación < 20 ms.',
+                action: 'MIGRACIÓN SUPCON: Suministro de la serie de switches industriales core SUPCON con fuentes de poder redundantes de alta eficiencia y soporte para G3 (ambientes cementeros corrosivos).'
             },
             'sw-core-cisco': {
                 title: 'Switch de Distribución Cisco (SF300-48)',
-                mfr: 'Cisco Systems',
-                proto: 'Ethernet TCP/IP, VLAN, STP',
+                mfr: 'Cisco / Reemplazo Recomendado: Switch Core Distribución SUPCON',
+                proto: 'Ethernet TCP/IP, VLAN, STP, QoS',
                 qty: '1 unidad física en Sala de Servidores',
-                desc: 'Switch administrado de 48 puertos en rack. Distribuye la red local hacia servidores SCADA (ECS), servidor PI, servidor QCX de laboratorio y consolas de operación (HMI).',
-                action: 'SUPCON suministra switches equivalentes con endurecimiento industrial contra vibración y polvo extremo para ambientes severos de cementeras.'
+                desc: 'Switch administrado de 48 puertos en rack. Distribuye la red local de control hacia servidores de SCADA (ECS), servidor PI, servidor QCX de laboratorio y consolas de operación (HMI).',
+                action: 'MIGRACIÓN SUPCON: Reemplazar por Switch L2/L3 administrable SUPCON de 48 puertos Gigabit para sala de servidores, mejorando el ancho de banda y la ciberseguridad.'
             },
             'sw-drs-cal': {
                 title: 'Switch DRS Sala Cal (TCSESM63F2CU1C)',
-                mfr: 'Schneider Electric (Telemecanique / ConneXium)',
+                mfr: 'Schneider Electric / Reemplazo Recomendado: Switch DRS SUPCON',
                 proto: 'Fast Ethernet (100Base-FX/TX), Redundancia en Anillo (DRS)',
                 qty: '1 switch de anillo en Sala Eléctrica Cal',
                 desc: 'Switch gestionado de doble anillo (Dual Ring Switch). Conecta la instrumentación y remotas de la Sala de Cal. Presenta un enlace roto hacia la Sala CAS que vulnera la redundancia.',
-                action: 'OPORTUNIDAD SUPCON: Tendido de fibra óptica y suministro de switch para cerrar el anillo redundante.'
+                action: 'OPORTUNIDAD TURN-KEY: Tender la fibra óptica faltante y suministrar un switch industrial gestionado SUPCON Riel DIN con tiempo de recuperación de anillo <20 ms.'
             },
             'sw-drs-cas': {
                 title: 'Switch DRS Sala CAS (TCSESM83F23FO)',
-                mfr: 'Schneider Electric (Telemecanique / ConneXium)',
+                mfr: 'Schneider Electric / Reemplazo Recomendado: Switch DRS SUPCON',
                 proto: 'Fast Ethernet, 3 Puertos de Fibra Óptica',
                 qty: '1 switch en Sala Eléctrica CAS (Pfister CAS)',
                 desc: 'Switch gestionado dotado de 3 puertos de fibra para soportar conexiones de largo alcance. Conecta el dosificador Pfister CAS y presenta la discontinuidad física de fibra hacia la Sala Cal.',
-                action: 'OPORTUNIDAD SUPCON: Cerrar el anillo de fibra de la red de control mediante cableado y configuración del protocolo RSTP/ERPS.'
+                action: 'OPORTUNIDAD TURN-KEY: Cierre físico del anillo mediante cableado de fibra y fusión, y reconfiguración lógica utilizando switches de anillo SUPCON.'
             },
             'sw-drs-h9': {
                 title: 'Switch DRS Sala Eléctrica H9 (TCSESM63F2CU1C)',
-                mfr: 'Schneider Electric (Telemecanique / ConneXium)',
+                mfr: 'Schneider Electric / Reemplazo Recomendado: Switch DRS SUPCON G3',
                 proto: 'Ethernet TCP/IP, Anillo Redundante Master/Slave VLAN',
                 qty: '1 switch (Master Ring VLAN de H9)',
                 desc: 'Switch principal de anillo para el área del horno H9. Conecta el PLC H9, PLC de Alimentación y PLC de Combustibles Alternativos. Enlaza también con las pasarelas Link150 de los flujómetros Coriolis.',
-                action: 'OPORTUNIDAD SUPCON: Conectar directamente los nuevos flujómetros Coriolis SUPCON SFC por Ethernet a este switch, eliminando pasarelas Link150.'
+                action: 'OPORTUNIDAD SUPCON: Eliminar pasarelas Link150 y conectar directamente los nuevos flujómetros Coriolis SUPCON SFC por Ethernet TCP/IP a este switch.'
             },
             'plc-h9': {
                 title: 'Rack de Control Horno H9 (Modicon M580)',
-                mfr: 'Schneider Electric',
+                mfr: 'Schneider Electric / Recomendación Experta: SUPCON UCS Nyx',
                 proto: 'Modbus TCP, EtherNet/IP',
                 qty: '1 PLC M580 principal + 1 PLC Alim + 1 PLC Combustibles',
-                desc: 'Plataforma moderna Modicon M580 equipada con tarjetas NOC 0301 para comunicaciones en anillo redundante de alta velocidad. Controla el proceso principal de combustión y alimentación del Horno 9.',
-                action: 'INTEGRACIÓN SUPCON: Compatibilidad de comunicación nativa de la suite APC-Cement de SUPCON con las CPUs M580 a través de Modbus TCP sin modificar el código de control del horno.'
+                desc: 'Controlador Modicon M580 con tarjeta NOC 0301. Controla la combustión y dosificación del Horno 9. Proceso crítico expuesto a paradas.',
+                action: 'RECOMENDACIÓN EXPERTA: Migrar a **SUPCON UCS Nyx (Controlador Definido por Software)** con redundancia N:1 gestionada por NyxOS y módulos de campo distribuidos **APL SmartEIO** de dos hilos. Esto elimina por completo los gabinetes de marshalling en H9, reduciendo cableado en un 40%.'
             },
             'plc-m21': {
                 title: 'Controlador Molino de Cemento 21 (Quantum)',
-                mfr: 'Schneider Electric',
+                mfr: 'Schneider Electric / Reemplazo Recomendado: DCS SUPCON ECS-700',
                 proto: 'Modbus TCP (Vía tarjeta NOE 771), Profibus DP (Módulo PTQ)',
-                qty: '1 PLC Quantum heredado',
+                qty: '1 PLC Quantum heredado en M21',
                 desc: 'PLC Quantum legacy (140CPU65150) con módulo Ethernet NOE. Utiliza un bus Profibus DP para la adquisición de datos de dosificación, pesómetros Schenck y protección de motores TeSys T.',
-                action: 'OPORTUNIDAD SUPCON: Reemplazo por DCS de Alta Disponibilidad SUPCON ECS-700, eliminando hardware Quantum obsoleto y centralizando la molienda.'
+                action: 'PROPUESTA DE MIGRACIÓN: Reemplazo por DCS de Alta Disponibilidad **SUPCON ECS-700** con tarjetas aisladas canal a canal **AI721-S** (muestreo rápido de 300 ms) y recubrimiento anticorrosión G3.'
             },
             'plc-m22': {
                 title: 'Controlador Molino de Cemento 22 (Quantum)',
-                mfr: 'Schneider Electric',
+                mfr: 'Schneider Electric / Reemplazo Recomendado: DCS SUPCON ECS-700',
                 proto: 'Modbus TCP (Vía tarjeta NOE 771), Profibus DP',
-                qty: '1 PLC Quantum heredado',
+                qty: '1 PLC Quantum heredado en M22',
                 desc: 'PLC Quantum legacy (140CPU65160) con módulo Ethernet NOE para control del Molino 22.',
-                action: 'OPORTUNIDAD SUPCON: Migración tecnológica consolidada a DCS de procesos SUPCON.'
+                action: 'PROPUESTA DE MIGRACIÓN: Migración tecnológica consolidada a DCS de procesos **SUPCON ECS-700**, integrando motores y pesaje Schenck bajo una misma base de control.'
             },
             'gw-link150': {
                 title: 'Pasarela Modbus RTU a Modbus TCP Link150',
-                mfr: 'Schneider Electric',
+                mfr: 'Schneider Electric / Solución SUPCON: Conexión Ethernet Directa',
                 proto: 'Modbus RTU (RS-485 serial) / Modbus TCP (Ethernet)',
                 qty: '2 unidades físicas en gabinetes H9',
-                desc: 'Gateway encargado de encapsular las tramas de datos de los flujómetros Coriolis seriales (Modbus RTU) a la red Ethernet. Representa un cuello de botella y punto de fallo constante ante ruidos eléctricos del horno.',
-                action: 'RECOMENDACIÓN SUPCON: Eliminar esta pasarela y actualizar los flujómetros a tecnología Coriolis SUPCON SFC con comunicación Ethernet nativa directa al switch.'
+                desc: 'Gateway encargado de encapsular datos de los flujómetros Coriolis seriales a Ethernet. Representa un punto de fallo constante ante ruidos electromagnéticos del horno.',
+                action: 'RECOMENDACIÓN SUPCON: Eliminar pasarelas. Proponer el flujómetro **Coriolis SUPCON SFC** con puerto Ethernet TCP/IP nativo, o el sistema **Venturi + Transmisor DP SUPCON CXT** (monocristalino, precisión ±0.035%, diafragma de oro, SIL3, ATEX).'
             },
             'inst-coriolis-pre': {
                 title: 'Flujómetro Coriolis Precalentador (PRE)',
-                mfr: 'Caudalímetro Másico de Proceso',
+                mfr: 'Caudalímetro Másico / Reemplazo Recomendado: Coriolis SUPCON SFC',
                 proto: 'Modbus RTU (RS-422/485 serial)',
                 qty: '1 medidor de flujo másico en línea',
-                desc: 'Medidor Coriolis crítico para dosificar el combustible al quemador del precalentador. Presenta problemas recurrentes de comunicación y precisión por ruido electromagnético.',
-                action: 'PROPUESTA SUPCON: Reemplazar por Coriolis SUPCON SFC con electrónica avanzada DSP inmune a vibración, flujo bifásico y con conexión Ethernet directa.'
+                desc: 'Medidor Coriolis crítico para dosificación de combustible. Presenta problemas de comunicación por interferencia electromagnética de variadores de frecuencia de alta potencia.',
+                action: 'PROPUESTA SUPCON: Reemplazar por **Coriolis SUPCON SFC** con procesamiento de señal DSP inmune a vibración y comunicación Ethernet Modbus TCP nativa.'
             },
             'inst-coriolis-alim': {
                 title: 'Flujómetro Coriolis Alimentación Horno (ALIM)',
-                mfr: 'Caudalímetro Másico de Proceso',
+                mfr: 'Caudalímetro Másico / Reemplazo Recomendado: Coriolis SUPCON SFC',
                 proto: 'Modbus RTU (RS-422/485 serial)',
                 qty: '1 medidor de flujo másico en línea',
-                desc: 'Medidor Coriolis para el flujo de alimentación al Horno. Susceptible a fallos en la comunicación serial y pérdida de tramas en la pasarela Link150.',
-                action: 'PROPUESTA SUPCON: Reemplazar por Coriolis SUPCON SFC con transmisión Ethernet nativa.'
+                desc: 'Medidor Coriolis para alimentación de carbón al horno. Susceptible a fallas en la comunicación serial y pérdida de tramas en la pasarela Link150.',
+                action: 'PROPUESTA SUPCON: Reemplazar por **Coriolis SUPCON SFC** con transmisión Ethernet nativa directa.'
             },
             'srv-pxp': {
                 title: 'Servidores de Sistema Experto FLSmidth PXP',
-                mfr: 'FLSmidth (Hardware HP/Dell)',
-                proto: 'TCP/IP, Integración OPC',
+                mfr: 'FLSmidth / Reemplazo Recomendado: SUPCON APC-Cement + supOS',
+                proto: 'TCP/IP, Integración OPC UA/DA',
                 qty: '2 servidores físicos (PXP Horno y PXP Molinos)',
-                desc: 'Servidores dedicados que ejecutan las reglas del sistema experto PXP para la optimización automática del horno y la finura del cemento. El cliente se quedará sin soporte ni licencias de este sistema.',
-                action: 'OPORTUNIDAD DE ORO SUPCON: Reemplazo directo con la suite de Control Avanzado de Procesos **SUPCON APC-Cement** (con módulos para Horno y Molinos) sin alterar la lógica interna de los PLCs.'
+                desc: 'Servidores que optimizan de forma automática la combustión del horno y la finura del cemento. El cliente perderá el licenciamiento.',
+                action: 'PROPUESTA DE OPTIMIZACIÓN: Reemplazo por la suite **SUPCON APC-Cement** (Control Predictivo Multivariable MPC) montada sobre la plataforma central **supOS**. Incluye diagnósticos **PRIDE** para predecir de forma online la obstrucción en cañerías de transmisores CXT y fricción en posicionadores de válvulas **CVP2000**.'
             },
             'srv-pi': {
                 title: 'Servidor API-Node PI System La Calera',
-                mfr: 'OSIsoft PI System (Hardware HP)',
+                mfr: 'OSIsoft PI System / Integración Nativa con supOS',
                 proto: 'OPC DA, OPC UA, TCP/IP',
                 qty: '1 servidor de adquisición de datos en tiempo real',
-                desc: 'Servidor concentrador que se comunica con el PLC H9 y Molinos para adquirir las variables de proceso históricas en tiempo real y transmitirlas al servidor PI corporativo.',
-                action: 'INTEGRACIÓN SUPCON: Los sistemas DCS y APC de SUPCON cuentan con drivers nativos certificados por OSIsoft para alimentar el PI System de forma directa y segura.'
+                desc: 'Servidor concentrador de variables de proceso históricas en tiempo real. Enlaza los datos con el PI System corporativo.',
+                action: 'INTEGRACIÓN SUPCON: Los controladores ECS-700 y UCS Nyx se conectan de forma transparente con el PI System corporativo mediante el Data Resource System (DRS) integrado en supOS.'
             },
             'link-broken-detail': {
                 title: 'Tramo de Fibra Óptica Faltante (Sala Cal - Sala CAS)',
                 mfr: 'Enlace de Comunicaciones Físico',
                 proto: 'Fibra Óptica Monomodo/Multimodo',
                 qty: '1 enlace discontinuo (roto)',
-                desc: 'El plano documenta la falta del tramo de fibra óptica que une físicamente el switch de la Sala de Cal con el de la Sala CAS. Al estar interrumpido, la red de switches DRS opera de manera lineal (bus) en lugar de anillo, eliminando la redundancia física y exponiendo a la planta a paradas completas por cualquier fallo de fibra en el lazo.',
-                action: 'OPORTUNIDAD SUPCON: Suministro de cable de fibra, fusiones y mano de obra para cerrar el anillo de red, y reconfiguración lógica de los protocolos de anillo redundante.'
+                desc: 'El plano documenta la falta del tramo de fibra óptica que une la Sala de Cal con la Sala CAS, dejando a los switches DRS operando linealmente en lugar de anillo redundante, exponiendo a la planta a caídas completas por cortes de fibra.',
+                action: 'PROPUESTA TURN-KEY: Obra civil, tendido y fusión de fibra óptica multimodo, y configuración redundante rápida con **switches gestionados SUPCON**.'
             }
         };
 

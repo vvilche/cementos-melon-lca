@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPCON | Control Panel and Asset Inventory - La Calera Plant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131a2c;
+            --bg-tertiary: #1e293b;
+            --accent-green: #10b981;
+            --accent-green-glow: rgba(16, 185, 129, 0.15);
+            --accent-blue: #06b6d4;
+            --accent-blue-glow: rgba(6, 182, 212, 0.15);
+            --accent-red: #ef4444;
+            --accent-red-glow: rgba(239, 68, 68, 0.2);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(148, 163, 184, 0.1);
+            --border-glow: rgba(6, 182, 212, 0.2);
+            --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Layout */
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(19, 26, 44, 0.8) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            position: relative;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-green) 0%, var(--accent-blue) 50%, var(--accent-red) 100%);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .supcon-logo {
+            font-size: 32px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .vertical-divider {
+            width: 1px;
+            height: 40px;
+            background-color: var(--border-color);
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title {
+            font-size: 20px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .header-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            color: #fca5a5;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-red);
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 14px var(--accent-red); }
+            100% { transform: scale(0.9); opacity: 0.5; }
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: transparent;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glow);
+            box-shadow: 0 15px 35px -5px rgba(6, 182, 212, 0.15);
+        }
+
+        .stat-card.active::after {
+            background-color: var(--accent-blue);
+        }
+        .stat-card.active {
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+
+        .stat-card.cat-plc::after { background-color: var(--accent-green); }
+        .stat-card.cat-plc:hover { box-shadow: 0 15px 35px -5px rgba(16, 185, 129, 0.15); }
+        .stat-card.cat-net::after { background-color: var(--accent-blue); }
+        .stat-card.cat-inst::after { background-color: #f59e0b; }
+        .stat-card.cat-inst:hover { box-shadow: 0 15px 35px -5px rgba(245, 158, 11, 0.15); }
+        .stat-card.cat-srv::after { background-color: #8b5cf6; }
+        .stat-card.cat-srv:hover { box-shadow: 0 15px 35px -5px rgba(139, 92, 246, 0.15); }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            gap: 4px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: var(--text-primary);
+            background-color: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Panel Cards / Containers */
+        .panel-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 24px;
+        }
+
+        .panel-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- TAB 1: MEMORANDUM & OPPORTUNITIES --- */
+        .minuta-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .minuta-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .minuta-content h2, .flow-content h2 {
+            font-size: 20px;
+            margin: 24px 0 12px 0;
+            color: var(--accent-blue);
+        }
+
+        .minuta-content h2:first-of-type, .flow-content h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .minuta-content p, .flow-content p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            font-size: 14.5px;
+        }
+
+        .minuta-content ul, .flow-content ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            color: var(--text-secondary);
+            font-size: 14.5px;
+        }
+
+        .minuta-content li, .flow-content li {
+            margin-bottom: 6px;
+        }
+
+        /* Alerts in markdown style */
+        .alert-box {
+            border-left: 4px solid;
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-box.note {
+            background-color: rgba(6, 182, 212, 0.05);
+            border-color: var(--accent-blue);
+            color: #cbd5e1;
+        }
+
+        .alert-box.tip {
+            background-color: rgba(16, 185, 129, 0.05);
+            border-color: var(--accent-green);
+            color: #cbd5e1;
+        }
+
+        .alert-box.warning {
+            background-color: rgba(245, 158, 11, 0.05);
+            border-color: #f59e0b;
+            color: #cbd5e1;
+        }
+
+        .alert-box.caution {
+            background-color: rgba(239, 68, 68, 0.05);
+            border-color: var(--accent-red);
+            color: #cbd5e1;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Email Card */
+        .email-panel {
+            background-color: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .email-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #059669 100%);
+            border: none;
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+        }
+
+        .copy-btn:active {
+            transform: translateY(1px);
+        }
+
+        .email-body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 500px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        /* --- TAB 2: DETAILED INVENTORY --- */
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px var(--accent-blue-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 10px 16px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-chip:hover {
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-chip.active {
+            background-color: var(--accent-blue-glow);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13.5px;
+        }
+
+        th {
+            background-color: rgba(30, 41, 59, 0.5);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        tr {
+            transition: var(--transition);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(30, 41, 59, 0.2);
+            color: var(--text-primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.plc { background-color: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge.switch { background-color: rgba(6, 182, 212, 0.1); color: var(--accent-blue); border: 1px solid rgba(6, 182, 212, 0.2); }
+        .badge.gateway { background-color: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .badge.instrument { background-color: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .badge.server { background-color: rgba(139, 92, 246, 0.1); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.2); }
+
+        .qty-cell {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .tag-pill {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #cbd5e1;
+        }
+
+        .no-results {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* --- TAB 3: INTERACTIVE NETWORK TOPOLOGY --- */
+        .diagram-layout {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .diagram-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .svg-container {
+            background-color: #080c14;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            position: relative;
+        }
+
+        .svg-container svg {
+            width: 100%;
+            height: auto;
+            min-width: 700px;
+            max-height: 600px;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .node:hover {
+            filter: brightness(1.2);
+        }
+
+        /* Network Interactive Sidebar */
+        .diagram-sidebar {
+            background-color: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .node-detail-title {
+            font-size: 18px;
+            color: var(--accent-blue);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
+
+        .node-detail-field {
+            margin-bottom: 12px;
+            font-size: 13.5px;
+        }
+
+        .node-detail-field .label {
+            color: var(--text-muted);
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .node-detail-field .value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .node-detail-field .desc {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+
+        /* SVG Animation */
+        .blinking-link {
+            stroke-dasharray: 6;
+            animation: dash 1s linear infinite, blink-red 1.5s infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -12; }
+        }
+
+        @keyframes blink-red {
+            0% { stroke: #ef4444; opacity: 0.4; }
+            50% { stroke: #f87171; opacity: 1; stroke-width: 3.5px; }
+            100% { stroke: #ef4444; opacity: 0.4; }
+        }
+
+        .glowing-warning {
+            animation: pulse-glow-red 2s infinite;
+        }
+
+        @keyframes pulse-glow-red {
+            0% { filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.5)); }
+            50% { filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8)); }
+            100% { filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.5)); }
+        }
+
+        .pulse-node {
+            animation: pulse-green 2.5s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { filter: drop-shadow(0 0 1px rgba(16, 185, 129, 0.3)); }
+            50% { filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.7)); }
+            100% { filter: drop-shadow(0 0 1px rgba(16, 185, 129, 0.3)); }
+        }
+
+        /* --- TAB 4: FLOW PROPOSAL --- */
+        .flow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 20px 0 30px 0;
+        }
+
+        .flow-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .flow-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+        }
+
+        .flow-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .flow-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .flow-card-badge {
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .flow-card-badge.rec {
+            background-color: var(--accent-green-glow);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .flow-card-badge.alt {
+            background-color: var(--accent-blue-glow);
+            color: var(--accent-blue);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .flow-spec-list {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .flow-spec-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+            padding-bottom: 4px;
+        }
+
+        .flow-spec-item .label {
+            color: var(--text-muted);
+        }
+
+        .flow-spec-item .value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="logo-container">
+                <span class="supcon-logo">SUPCON</span>
+                <div class="vertical-divider"></div>
+                <div class="header-info">
+                    <h1 class="header-title">Control Panel & Asset Inventory</h1>
+                    <span class="header-subtitle">La Calera Plant (LCA) - Cementos Melón S.A.</span>
+                </div>
+            </div>
+            <div class="header-status">
+                <span class="status-dot"></span>
+                <strong>Vulnerability Detected:</strong> Broken Fiber Redundancy
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card active" onclick="filterByCategory('all', this)">
+                <span class="stat-label">Total Mapped Assets</span>
+                <div class="stat-value" id="stat-total">96</div>
+                <div class="stat-desc">48 distinct equipment types</div>
+            </div>
+            <div class="stat-card cat-plc" onclick="filterByCategory('PLC', this)">
+                <span class="stat-label">Controllers (PLCs)</span>
+                <div class="stat-value" id="stat-plc">21</div>
+                <div class="stat-desc">M580, M340 & legacy Quantum</div>
+            </div>
+            <div class="stat-card cat-net" onclick="filterByCategory('Switch', this)">
+                <span class="stat-label">Switches & Infrastructure</span>
+                <div class="stat-value" id="stat-net">42</div>
+                <div class="stat-desc">Moxa Core, Schneider DRS, Gateways</div>
+            </div>
+            <div class="stat-card cat-inst" onclick="filterByCategory('Instrumento', this)">
+                <span class="stat-label">Instruments & CEMS</span>
+                <div class="stat-value" id="stat-inst">23</div>
+                <div class="stat-desc">Coriolis H9, CEMS ABB, PGNAA</div>
+            </div>
+            <div class="stat-card cat-srv" onclick="filterByCategory('Servidor', this)">
+                <span class="stat-label">Servers & Software</span>
+                <div class="stat-value" id="stat-srv">10</div>
+                <div class="stat-desc">SCADA, PI, PXP Kiln/Mills</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tab Menu -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-diagram', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                Interactive Network Architecture
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-inventory', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                Technical Asset Inventory
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-flow', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                Flow Proposal (FC01-CA)
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-minutes', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Work Memorandum & Proposal
+            </button>
+        </div>
+
+        <!-- TAB CONTENT 1: INTERACTIVE NETWORK DIAGRAM -->
+        <div id="tab-diagram" class="tab-content active">
+            <div class="diagram-layout">
+                <!-- SVG Network Topology -->
+                <div class="svg-container">
+                    <svg viewBox="0 0 850 480" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#131e35" stop-opacity="0.5" />
+                                <stop offset="100%" stop-color="#080c14" stop-opacity="0" />
+                            </radialGradient>
+                        </defs>
+                        <rect x="0" y="0" width="850" height="480" fill="url(#bgGlow)" rx="10"/>
+
+                        <!-- Network Connections / Lines -->
+                        <path d="M 120 180 L 280 180" stroke="#06b6d4" stroke-width="2" />
+                        <path d="M 280 180 L 440 180" stroke="#06b6d4" stroke-width="2" />
+                        <path d="M 440 180 L 600 180" stroke="#06b6d4" stroke-width="2" />
+                        
+                        <!-- Missing fiber link - Blinking Red -->
+                        <path d="M 600 180 C 680 230, 680 290, 600 340" stroke="#ef4444" stroke-width="2.5" class="blinking-link" id="link-broken" />
+                        
+                        <path d="M 600 340 L 440 340" stroke="#06b6d4" stroke-width="2" />
+                        <path d="M 440 340 L 280 340" stroke="#06b6d4" stroke-width="2" />
+                        <path d="M 280 340 L 120 340" stroke="#06b6d4" stroke-width="2" />
+                        <path d="M 120 340 L 120 180" stroke="#06b6d4" stroke-width="2" />
+
+                        <!-- Core Connections -->
+                        <line x1="280" y1="180" x2="360" y2="70" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3 3" />
+                        <line x1="440" y1="180" x2="480" y2="70" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3 3" />
+                        <line x1="360" y1="70" x2="480" y2="70" stroke="#10b981" stroke-width="2" />
+
+                        <!-- Sub-connections PLCs -->
+                        <line x1="120" y1="180" x2="70" y2="120" stroke="#cbd5e1" stroke-width="1.5" />
+                        <line x1="70" y1="120" x2="70" y2="60" stroke="#fbbf24" stroke-width="1.5" />
+                        <line x1="70" y1="60" x2="30" y2="30" stroke="#f87171" stroke-width="1.2" />
+                        <line x1="70" y1="60" x2="110" y2="30" stroke="#f87171" stroke-width="1.2" />
+
+                        <line x1="280" y1="340" x2="230" y2="410" stroke="#cbd5e1" stroke-width="1.5" />
+                        <line x1="280" y1="340" x2="330" y2="410" stroke="#cbd5e1" stroke-width="1.5" />
+
+                        <line x1="360" y1="70" x2="310" y2="20" stroke="#c084fc" stroke-width="1.5" />
+                        <line x1="480" y1="70" x2="530" y2="20" stroke="#c084fc" stroke-width="1.5" />
+
+                        <line x1="440" y1="340" x2="440" y2="410" stroke="#cbd5e1" stroke-width="1.5" />
+                        <line x1="600" y1="340" x2="600" y2="410" stroke="#cbd5e1" stroke-width="1.5" />
+
+                        <!-- CORE SWITCHES -->
+                        <g class="node pulse-node" onclick="showNodeDetails('sw-core-moxa')">
+                            <rect x="330" y="50" width="60" height="36" rx="6" fill="#134e4a" stroke="#10b981" stroke-width="2" />
+                            <text x="360" y="72" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">MOXA CORE</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-core-cisco')">
+                            <rect x="450" y="50" width="60" height="36" rx="6" fill="#134e4a" stroke="#10b981" stroke-width="2" />
+                            <text x="480" y="72" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">CISCO CORE</text>
+                        </g>
+
+                        <!-- ANILLO REDUNDANTE SWITCHES (DRS) -->
+                        <g class="node" onclick="showNodeDetails('sw-drs-cal')">
+                            <circle cx="600" cy="180" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="600" y="184" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW CAL</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-drs-cas')">
+                            <circle cx="600" cy="340" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="600" y="344" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW CAS</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-drs-h9')">
+                            <circle cx="120" cy="180" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="120" y="184" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW H9</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-drs-m21')">
+                            <circle cx="280" cy="180" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="280" y="184" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW M21</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-drs-m22')">
+                            <circle cx="440" cy="180" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="440" y="184" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW M22</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-drs-s2k')">
+                            <circle cx="440" cy="340" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="440" y="344" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW S2K</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-drs-s3k')">
+                            <circle cx="280" cy="340" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="280" y="344" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW S3K</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('sw-drs-env')">
+                            <circle cx="120" cy="340" r="22" fill="#0f3b4c" stroke="#06b6d4" stroke-width="2" />
+                            <text x="120" y="344" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">SW ENV</text>
+                        </g>
+
+                        <!-- PLCs / Controllers -->
+                        <g class="node" onclick="showNodeDetails('plc-h9')">
+                            <rect x="35" y="100" width="70" height="30" rx="4" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" />
+                            <text x="70" y="118" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">PLC H9 (M580)</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('plc-m21')">
+                            <rect x="195" y="410" width="70" height="30" rx="4" fill="#311010" stroke="#f87171" stroke-width="1.5" />
+                            <text x="230" y="428" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">PLC M21 (Quant)</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('plc-m22')">
+                            <rect x="295" y="410" width="70" height="30" rx="4" fill="#311010" stroke="#f87171" stroke-width="1.5" />
+                            <text x="330" y="428" fill="#f8fafc" font-size="10" font-weight="700" text-anchor="middle">PLC M22 (Quant)</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('plc-s3k')">
+                            <rect x="405" y="410" width="70" height="30" rx="4" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" />
+                            <text x="440" y="428" fill="#f8fafc" font-size="9" font-weight="700" text-anchor="middle">PLC SILOS 3000</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('plc-env')">
+                            <rect x="565" y="410" width="70" height="30" rx="4" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" />
+                            <text x="600" y="428" fill="#f8fafc" font-size="9" font-weight="700" text-anchor="middle">PLC ENV1/ENV2</text>
+                        </g>
+
+                        <!-- Gateways & Instruments H9 -->
+                        <g class="node" onclick="showNodeDetails('gw-link150')">
+                            <rect x="45" y="45" width="50" height="24" rx="4" fill="#3f2305" stroke="#fbbf24" stroke-width="1.5" />
+                            <text x="70" y="60" fill="#f8fafc" font-size="9" font-weight="700" text-anchor="middle">LINK150</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('inst-coriolis-pre')">
+                            <circle cx="30" cy="30" r="12" fill="#451a03" stroke="#ef4444" stroke-width="1.5" />
+                            <text x="30" y="33" fill="#f8fafc" font-size="8" font-weight="700" text-anchor="middle">C.PRE</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('inst-coriolis-alim')">
+                            <circle cx="110" cy="30" r="12" fill="#451a03" stroke="#ef4444" stroke-width="1.5" />
+                            <text x="110" y="33" fill="#f8fafc" font-size="8" font-weight="700" text-anchor="middle">C.ALIM</text>
+                        </g>
+
+                        <!-- SERVERS -->
+                        <g class="node" onclick="showNodeDetails('srv-pxp')">
+                            <rect x="270" y="5" width="80" height="26" rx="4" fill="#2d154c" stroke="#a78bfa" stroke-width="1.5" />
+                            <text x="310" y="21" fill="#f8fafc" font-size="9" font-weight="700" text-anchor="middle">PXP SERVERS</text>
+                        </g>
+                        <g class="node" onclick="showNodeDetails('srv-pi')">
+                            <rect x="490" y="5" width="80" height="26" rx="4" fill="#2d154c" stroke="#a78bfa" stroke-width="1.5" />
+                            <text x="530" y="21" fill="#f8fafc" font-size="9" font-weight="700" text-anchor="middle">PI API-NODE</text>
+                        </g>
+
+                        <!-- Warning Sign on Broken Link -->
+                        <g class="glowing-warning" onclick="showNodeDetails('link-broken-detail')">
+                            <polygon points="665,245 680,270 650,270" fill="#ef4444" stroke="#f87171" stroke-width="1" />
+                            <text x="665" y="267" fill="#f8fafc" font-size="12" font-weight="900" text-anchor="middle">!</text>
+                            <text x="730" y="260" fill="#ef4444" font-size="10" font-weight="700" text-anchor="start">Broken Ring</text>
+                            <text x="730" y="272" fill="#cbd5e1" font-size="8" text-anchor="start">Cal Room - CAS Room</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Detail Panel -->
+                <div class="diagram-sidebar">
+                    <h3 class="node-detail-title" id="detail-title">Click on a node in the diagram</h3>
+                    <div id="detail-body">
+                        <p style="color: var(--text-secondary); font-size: 13.5px;">Click on any equipment or link in the control network architecture diagram to view its complete technical specifications, manufacturer, protocol, and SUPCON modernization opportunities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 2: DETAILED INVENTORY -->
+        <div id="tab-inventory" class="tab-content">
+            <div class="panel-card">
+                <h2 class="panel-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    La Calera Automation & Instrumentation Asset Inventory
+                </h2>
+                
+                <!-- Filter bar -->
+                <div class="filter-controls">
+                    <div class="search-wrapper">
+                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="search-input" id="search-box" placeholder="Search by name, tag, manufacturer, protocol..." onkeyup="filterTable()">
+                    </div>
+                    <div class="category-filters">
+                        <span class="filter-chip active" onclick="filterByChip('all', this)">All</span>
+                        <span class="filter-chip" onclick="filterByChip('PLC', this)">PLCs</span>
+                        <span class="filter-chip" onclick="filterByChip('Switch', this)">Switches & F.O.</span>
+                        <span class="filter-chip" onclick="filterByChip('Gateway', this)">Gateways & Net</span>
+                        <span class="filter-chip" onclick="filterByChip('Instrumento', this)">Instrumentation / CEMS</span>
+                        <span class="filter-chip" onclick="filterByChip('Servidor', this)">Servers</span>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table id="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Equipment Name</th>
+                                <th>Manufacturer</th>
+                                <th style="text-align: center;">Qty</th>
+                                <th>Protocols / Communication</th>
+                                <th>Operational Description in Plant</th>
+                                <th>SUPCON Recommendation</th>
+                                <th>Tags in Diagram</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Dynamic rendering by JS -->
+                        </tbody>
+                    </table>
+                    <div class="no-results" id="no-results-msg" style="display: none;">
+                        No assets found matching the search criteria.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 3: FLOW METER REPLACEMENT PROPOSAL (FC01-CA) -->
+        <div id="tab-flow" class="tab-content">
+            <div class="panel-card flow-content">
+                <h2 class="panel-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Technical Proposal: E-T-A FC01-CA Flowmeter Replacement
+                </h2>
+                
+                <p>The client requires replacing a gaseous flow sensor in a <strong>1" (DN25)</strong> line operating under a pressure of **100 mBar**. The original instrument was an **E-T-A FC01-CA** operating on the thermal dispersion/calorimetric principle, which was physically destroyed due to a mechanical impact (personnel fall). The process gas carries **high concentrations of corrosive Chlorine and highly abrasive CKD (Cement Kiln Dust)** at high temperatures.</p>
+
+                <div class="alert-box warning">
+                    <div class="alert-title">Process Challenges (Chlorine + CKD + Mechanical Falls)</div>
+                    Gaseous chlorine in the presence of ambient moisture is extremely corrosive to standard stainless steel (316L). The kiln dust (CKD) easily accumulates on hot thermal dispersion probes, acting as thermal insulation and ruining the reading accuracy. Additionally, traditional insertion probes protruding from the pipe are highly vulnerable to physical impacts.
+                </div>
+
+                <h2>SUPCON Solution Alternatives</h2>
+                <p>We present three industrial solutions from SUPCON specifically engineered to withstand corrosion and CKD abrasion while eliminating any risk of future mechanical breakage:</p>
+
+                <div class="flow-grid">
+                    <!-- Alternativa 1 -->
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <span class="flow-card-title">Alt 1: In-Line Thermal Mass</span>
+                            <span class="flow-card-badge alt">Equivalent</span>
+                        </div>
+                        <h4 style="color: var(--accent-blue); margin-bottom:10px;">SUPCON SRF-I Series (1")</h4>
+                        <p style="font-size:13px; margin-bottom:12px;">Thermal mass flow measurement integrated in a solid flanged 1" pipe section. The electronics are protected inside a robust IP67 cast aluminum enclosure, resilient against mechanical shocks.</p>
+                        <div class="flow-spec-list">
+                            <div class="flow-spec-item"><span class="label">Sensor Sheath Material</span><span class="value" style="color: var(--accent-green);">Hastelloy C-276 / Ceramic</span></div>
+                            <div class="flow-spec-item"><span class="label">Mounting</span><span class="value">1" In-Line (Flanged)</span></div>
+                            <div class="flow-spec-item"><span class="label">Low-Flow Sensitivity</span><span class="value">Excellent (from 0.1 m/s)</span></div>
+                            <div class="flow-spec-item"><span class="label">Output</span><span class="value">4-20 mA Active</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Alternativa 2 -->
+                    <div class="flow-card" style="border-color: var(--accent-green); box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);">
+                        <div class="flow-card-header">
+                            <span class="flow-card-title">Alt 2: Differential Pressure</span>
+                            <span class="flow-card-badge rec">Recommended</span>
+                        </div>
+                        <h4 style="color: var(--accent-green); margin-bottom:10px;">Venturi 1" + CXT Transmitter</h4>
+                        <p style="font-size:13px; margin-bottom:12px;">A heavy-duty solid steel Venturi tube installed in the line (no moving parts, no internal sensors) paired with a **SUPCON CXT Smart Differential Pressure Transmitter mounted remotely** in a protected location.</p>
+                        <div class="flow-spec-list">
+                            <div class="flow-spec-item"><span class="label">In-Line Element</span><span class="value" style="color: var(--accent-green);">Tubo Venturi (Solid Steel)</span></div>
+                            <div class="flow-spec-item"><span class="label">Transmitter Location</span><span class="value" style="color: var(--accent-green);">Remote (Shock Protected)</span></div>
+                            <div class="flow-spec-item"><span class="label">CKD/Chlorine Resistance</span><span class="value">Excellent (No clogging/wear)</span></div>
+                            <div class="flow-spec-item"><span class="label">Output</span><span class="value">4-20 mA / HART</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Alternativa 3 -->
+                    <div class="flow-card">
+                        <div class="flow-card-header">
+                            <span class="flow-card-title">Alt 3: Vortex Flowmeter</span>
+                            <span class="flow-card-badge alt">Alternative</span>
+                        </div>
+                        <h4 style="color: var(--accent-blue); margin-bottom:10px;">SUPCON SFV-I Series (1")</h4>
+                        <p style="font-size:13px; margin-bottom:12px;">In-line 1" Vortex flowmeter. It features no moving parts, and the piezoelectric crystal sensor is completely isolated behind a thick stainless steel wall, secure from CKD abrasion.</p>
+                        <div class="flow-spec-list">
+                            <div class="flow-spec-item"><span class="label">Sensor Element</span><span class="value">Sealed Piezoelectric</span></div>
+                            <div class="flow-spec-item"><span class="label">Fluid Temperature</span><span class="value">Up to 350°C</span></div>
+                            <div class="flow-spec-item"><span class="label">Dynamic Range</span><span class="value">Medium (requires min velocity)</span></div>
+                            <div class="flow-spec-item"><span class="label">Output</span><span class="value">4-20 mA</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Technical Selection Matrix</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Technical Criterion</th>
+                                <th style="text-align:center;">E-T-A FC01-CA</th>
+                                <th style="color: var(--accent-blue);">Alt 1: Thermal SRF-I</th>
+                                <th style="color: var(--accent-green); font-weight:700;">Alt 2: Venturi + CXT (Rec.)</th>
+                                <th style="color: var(--accent-blue);">Alt 3: Vortex SFV-I</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Resilience to physical shocks</strong></td>
+                                <td style="text-align:center; color: var(--accent-red);">Low (Exposed probe)</td>
+                                <td style="color: var(--text-primary);">High (Heavy fluged body)</td>
+                                <td style="color: var(--accent-green); font-weight:700;">Excellent (Remote transmitter)</td>
+                                <td style="color: var(--text-primary);">High (Solid body)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Corrosion Resistance (Chlorine)</strong></td>
+                                <td style="text-align:center;">Medium (316L SS)</td>
+                                <td style="color: var(--accent-green);">Excellent (Hastelloy C-276)</td>
+                                <td style="color: var(--accent-green);">Excellent (Gold-plated diaphragm)</td>
+                                <td style="color: var(--text-primary);">High (316L SS)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Abrasion/Clogging (CKD)</strong></td>
+                                <td style="text-align:center; color: var(--accent-red);">Low (Thermal insulation)</td>
+                                <td style="color: var(--text-secondary);">Medium-High (In-line probe)</td>
+                                <td style="color: var(--accent-green); font-weight:700;">Excellent (No flow obstacles)</td>
+                                <td style="color: var(--text-primary);">High (No moving parts)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Low flow sensitivity</strong></td>
+                                <td style="text-align:center; color: var(--accent-green); font-weight:600;">Excellent</td>
+                                <td style="color: var(--accent-green); font-weight:600;">Excellent</td>
+                                <td>Medium-Low</td>
+                                <td>Medium-Low</td>
+                            </tr>
+                            <tr>
+                                <td><strong>4-20 mA Output Loop</strong></td>
+                                <td style="text-align:center; color: var(--accent-green);">Yes</td>
+                                <td style="color: var(--accent-green);">Yes (Native)</td>
+                                <td style="color: var(--accent-green);">Yes (Native)</td>
+                                <td style="color: var(--accent-green);">Yes (Native)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2>SUPCON Engineering Recommendation</h2>
+                <div class="alert-box tip" style="margin-top:20px;">
+                    <div class="alert-title">Recommended Supply Strategy</div>
+                    1. <strong>Ultimate Robust Solution (Priority: Physical Resilience):</strong> Implement **Alternativa 2 (Tubo Venturi 1" + Transmisor de Presión Diferencial SUPCON CXT montado de forma remota)**. By positioning the sensitive electronics away from the main walkway and using a solid Venturi tube with no internal probes, you completely eliminate the risk of mechanical damage and the reading drift caused by dust coating.  
+                    <br>2. <strong>Direct Replacement Solution (Priority: Ultra-low Flow Sensitivity):</strong> Implement **Alternativa 1 (Medidor de Masa Térmica In-line SUPCON Serie SRF-I)** with a sensor sheath in **Hastelloy C-276** and ceramic coating. The thick flanged body provides the mechanical robustness needed to protect the instrument from future physical impacts.
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 4: WORK MEMORANDUM -->
+        <div id="tab-minutes" class="tab-content">
+            <div class="minuta-container">
+                <!-- Left: Minutes HTML -->
+                <div class="panel-card minuta-content">
+                    <h2 class="panel-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Technical & Commercial Memorandum
+                    </h2>
+                    
+                    <h2>1. Technical Summary and Architecture Diagnosis</h2>
+                    <p>Based on the **"RedControl LCA_Rev0"** engineering drawing, the La Calera Plant operates with a mixed Schneider Electric architecture (Quantum and M580 PLCs) with fiber optic links and redundant ConneXium DRS switches. A critical fiber disconnect between the **Cal Room** and the **CAS Room** has been identified, breaking the physical redundancy of the control network.</p>
+                    
+                    <div class="alert-box note">
+                        <div class="alert-title">Cementos Melón S.A. - Asset Status</div>
+                        <ul>
+                            <li><strong>Plant Location:</strong> La Calera Plant (LCA), Valparaíso Region, Chile.</li>
+                            <li><strong>Control Layer:</strong> Modicon M580 (Kiln H9 with NOC 0301) and legacy Quantum PLCs (Cement Mills 21/22 with Profibus DP and TeSys T motor protections).</li>
+                            <li><strong>Network Layer:</strong> Moxa IKS-6726A Core switches and Schneider TCSESM distribution switches.</li>
+                        </ul>
+                    </div>
+
+                    <h2>2. Plant Pain Points and SUPCON Engineering Solutions</h2>
+                    
+                    <div class="alert-box warning">
+                        <div class="alert-title">Opportunity 1: Flow Measurement in Kiln Bypass / Purge (Horno H9)</div>
+                        The original 1" E-T-A FC01-CA thermal dispersion flowmeter was physically destroyed by a personnel fall in a 100 mBar line with high temperature, highly abrasive CKD dust, and highly corrosive chlorine.
+                        <br><strong>SUPCON Solution:</strong> 
+                        <ul>
+                            <li><strong>Alternative A (Recommended): 1" Venturi Tube + SUPCON CXT Differential Pressure Transmitter.</strong> A solid steel in-line Venturi tube (no moving parts, immune to clogging and wear) paired with a **remotely mounted SUPCON CXT Smart Transmitter** in a protected location. The CXT features **$\pm0.035\%$** accuracy, 10-year stability, **gold-plated diaphragms** (resisting chlorine corrosion and hydrogen permeation), SIL3 and ATEX/IECEx.</li>
+                            <li><strong>Alternative B: SUPCON SRF-I In-Line Thermal Mass Flowmeter.</strong> A robust flanged 1" body (impact resistant) with a sensor sheath in **Hastelloy C-276** and ceramic protective coating.</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert-box caution">
+                        <div class="alert-title">Opportunity 2: Expert System Replacement (FLSmidth PXP) & Asset Intelligence</div>
+                        The client is facing the expiration of licenses for the `PXP HORNO` and `PXP MOLINOS` servers.
+                        <br><strong>SUPCON Solution:</strong> Implement the **SUPCON APC-Cement** Advanced Process Control suite (MPC/RTO) running on the **supOS** Industrial Operating System ("1+2+N" architecture) to automatically optimize kiln H9 and mills 21/22, increasing t/h throughput and reducing energy consumption by 3% - 5%. This is integrated with the **PRIDE** asset intelligence suite for online predictive diagnostics: detecting impulse line clogging in CXT transmitters and mechanical stiction in control valves using **CVP2000** smart positioners.
+                    </div>
+
+                    <div class="alert-box tip">
+                        <div class="alert-title">Opportunity 3: Network Vulnerability (Fiber Optic Ring Closure)</div>
+                        The missing fiber optic cable link between the Cal Room and the CAS Room forces the DRS switches to operate linearly, losing tolerance to single network faults.
+                        <br><strong>SUPCON Solution:</strong> Turn-key engineering, trenching, laying, and splicing of the missing fiber optic link, supplying SUPCON managed ring switches with ultra-fast recovery times (<20 ms).
+                    </div>
+
+                    <h2>3. Control Modernization: DCS ECS-700 vs. UCS Nyx</h2>
+                    <p>For the long-term migration of the legacy Quantum and M580 PLCs, the team proposes two leading technological paths:</p>
+                    <ul>
+                        <li><strong>DCS SUPCON ECS-700 (Proven High-Reliability DCS):</strong> Our flagship system with 30k global references. Features **G3 conformal coating** against gaseous corrosion and **AI721-S** analog cards (8 channels for thermocouple with **channel-to-channel isolation** and fast **300 ms** sampling).</li>
+                        <li><strong>SUPCON UCS Nyx (Next-Gen Generational Leap):</strong> A software-defined Universal Control System running on **NyxOS** (microservice-based real-time OS, 99.99% availability, N:1 redundancy that activates a backup in <1 second). It utilizes the **Ethernet-APL SmartEIO** ecosystem (16-channel in-field E/S modules over a two-wire bus). **This eliminates marshalling cabinets entirely**, reducing wiring costs by over 40% and enabling intrinsically safe live-working in hazardous fields.</li>
+                    </ul>
+
+                    <h2>4. Commercial Positioning Strategy (CONECTA Methodology)</h2>
+                    <div class="alert-box tip">
+                        <div class="alert-title">Positioning and Barrier Technique</div>
+                        *   **RAIDS Matrix:** Mapping of Recommender (Víctor Vilches), Authority (Plant I&C Chief), Decisor (Plant Operations Manager), and Sponsor (Maintenance Engineer).
+                        *   **Sales TRIVECTOR:** (1) Capex reduction with UCS Nyx and Ethernet-APL, (2) Physical and chemical robustness of CXT with gold-plated diaphragms and remote mounting, and (3) AI-native asset optimization with APC-Cement and PRIDE.
+                        *   **Barrier Technique (Turn-key MAC):** Package the scope as a unified MAC (Main Automation Contractor) turn-key contract including fiber laying, control migration, field instruments, and advanced optimization. This forces Western competitors like Emerson Chile (who have a long **14-week lead time** for importing cabinets) to subcontract external civil works or software, raising their prices and complexity, while **CONECTA/SUPCON delivers the entire scope directly in-house**.
+                    </div>
+                </div>
+
+                <!-- Right: Email Copy Panel -->
+                <div class="email-panel">
+                    <div class="email-header">
+                        <h3 style="font-size: 15px; color: var(--text-primary);">Email Draft</h3>
+                        <button class="copy-btn" onclick="copyEmailToClipboard()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy Email
+                        </button>
+                    </div>
+                    <div class="email-body" id="email-text">Subject: Optimization Proposals, Network Redundancy and Flow Instrumentation for Kiln Bypass - La Calera Plant Melón
+
+Dear [Contact Name],
+
+We hope this email finds you well. 
+
+First of all, we would like to thank you for providing the technical information and the architecture drawing "RedControl LCA_Rev0" of the La Calera Plant. Our application engineering team at SUPCON, in partnership with our local integrator CONECTA Ingeniería, has developed a dedicated technical-commercial proposal to address the automation and instrumentation challenges at your plant.
+
+We have structured three key solutions designed to enhance availability, process resilience, and energy efficiency across your operations:
+
+1. Replacement of the 1" Kiln Bypass Flowmeter (Kiln H9)
+Considering the severe conditions of this process (high temperature, highly abrasive CKD dust, and chemical corrosion from Chlorine gas), we propose two high-durability options with 4-20 mA + HART outputs:
+* Alternative A (Recommended for Maximum Physical and Process Robustness): Solid Steel Venturi System + SUPCON CXT Smart Differential Pressure Transmitter
+This is the most robust solution. It involves installing a heavy-duty solid steel Venturi tube in the line (which has no moving parts or internal probes that could clog with CKD or wear down from chlorine). The measurement is transmitted via impulse lines to our SUPCON CXT Smart Transmitter mounted remotely in a protected location. The CXT features a monocrystalline silicon composite sensor with ±0.035% accuracy, 10-year stability, and gold-plated diaphragms to completely neutralize chlorine attack. The remote mounting eliminates the risk of physical damage from personnel falls.
+* Alternative B (Direct Replacement with High Sensitivity): SUPCON SRF-I In-Line Thermal Mass Flowmeter
+An in-line 1" flanged body designed to withstand mechanical impacts. To guarantee a long service life against CKD abrasion and chlorine corrosion, the internal sensor is supplied with a Hastelloy C-276 sheath and protective ceramic coating.
+
+2. Generational Leap in Automation: SUPCON UCS Nyx Universal Control System
+For the migration and replacement of the legacy Quantum and M580 PLCs in the Kiln and Mill areas, we offer a software-defined control architecture that represents a paradigm shift:
+* Software-Defined Control: Virtualized controllers running on the real-time, microservice-based NyxOS, providing dynamic N:1 redundancy (activating a backup node in less than 1 second).
+* Ethernet-APL SmartEIO: Distributed E/S field modules powered by two-wire Ethernet-APL. This technology completely eliminates intermediate marshalling cabinets, drastically reducing cabling and design engineering costs while enabling intrinsically safe live-working in the field.
+* Note: If you prefer a traditional architecture, we can supply our flagship DCS SUPCON ECS-700, featuring channel-to-channel isolated AI721-S cards (300ms fast sampling) and G3 anti-corrosion coating from the factory.
+
+3. Replacement of the Expert System (FLSmidth PXP) and Asset Intelligence
+We propose the implementation of our SUPCON APC-Cement Advanced Process Control suite running on our supOS industrial operating system:
+* It utilizes Multivariable Predictive Control (MPC) algorithms to automatically optimize the kiln H9 and mills 21/22, ensuring production increases (t/h) of up to 8% and significant fuel/power savings.
+* It integrates the PRIDE intelligence module for 24/7 online predictive monitoring: detecting impulse line clogging in CXT transmitters and mechanical stiction in control valves using CVP2000 smart positioners.
+
+4. Fiber Optic Ring Redundancy
+We provide the turn-key engineering, trenching, and installation to complete the "Missing Fiber Optic Link between the Cal Room and the CAS Room" documented in your drawing. Using SUPCON industrial managed switches, we guarantee a redundant ring recovery time of less than 20 ms.
+
+With the local engineering and support of CONECTA, we guarantee a highly optimized capital investment (10% to 30% more cost-effective than Western alternatives) and significantly reduced delivery times (compared to the typical 14 weeks of other manufacturers).
+
+To review these alternatives and show you the interactive network topology we have designed, we would like to propose a brief 30-minute virtual technical meeting. Would next Tuesday at 10:00 AM work for you?
+
+We look forward to your valuable comments.
+
+Sincerely,
+
+Victor Vilches
+Automation & Control Team
+SUPCON Chile</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        SUPCON Chile &copy; 2026. Advanced Control Solutions & Industrial Instrumentation.
+    </footer>
+
+    <!-- JavaScript code -->
+    <script>
+        // Full database of the 48 types of items
+        const rawInventory = [
+            { cat: 'PLC', name: 'Modicon M580 CPU (BMEP584040)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, EtherNet/IP', desc: 'High-end main controller for the H9 process area (Level 4).', tags: ['PLC M580 LEVEL4 BMP584040 SCHNEIDER'] },
+            { cat: 'PLC', name: 'Modicon Quantum CPU (140CPU65150)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, Profibus DP', desc: 'Legacy Quantum controller dedicated to Cement Mill 21 (M21).', tags: ['140CPU65150 PLC QUANTUM SCHNEIDER', 'PLC  MOLINO21'] },
+            { cat: 'PLC', name: 'Modicon Quantum CPU (140CPU65160)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, Profibus DP', desc: 'Legacy Quantum controller dedicated to Cement Mill 22 (M22).', tags: ['140CPU65160 PLC QUANTUM SCHNEIDER', 'PLC  MOLINO22'] },
+            { cat: 'PLC', name: 'Modicon Quantum CPU (140CPU53414)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, RIO', desc: 'Legacy Quantum process controller, CPU 534 series.', tags: ['PLC 140CPU534'] },
+            { cat: 'PLC', name: 'Modicon M340 CPU (BMXP342020) - Humectación', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, EtherNet/IP', desc: 'Mid-range controller dedicated to the plant Humectation process.', tags: ['BMXP342020 LEVEL0 HUMECTACION', 'PLC HUMECTAC'] },
+            { cat: 'PLC', name: 'Modicon M340 CPU (BMXP342020) - Dash', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, EtherNet/IP', desc: 'Mid-range controller for the auxiliary dashboard panel (DASH).', tags: ['BMXP342020 LEVEL0 DASH', 'PLC DASH'] },
+            { cat: 'PLC', name: 'Modicon PLC (H9)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, EtherNet/IP', desc: 'Controller for H9 area, currently in migration process or main rack.', tags: ['PLC H9', 'PLC H9  NOC 0301'] },
+            { cat: 'PLC', name: 'Modicon PLC (Alimentación H9)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller for kiln weighing feed and dosing in H9.', tags: ['PLC ALIMH9', 'PLC ALIMH9  NOC0301'] },
+            { cat: 'PLC', name: 'Modicon PLC (Combustibles Alternativos)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller for the co-processing alternative fuels injection and dosing system.', tags: ['PLC COMBUST ALTERNAT', 'PLC COMBALT'] },
+            { cat: 'PLC', name: 'Modicon PLC (Molinos 18 y 19)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller in charge of cement mills M18 and M19 operations.', tags: ['PLC M18-M19'] },
+            { cat: 'PLC', name: 'Modicon PLC (Molino 17)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller in charge of cement mill M17.', tags: ['PLC M17'] },
+            { cat: 'PLC', name: 'Modicon PLC (Secador)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Local controller for the pozzolana/raw material dryer area.', tags: ['PLC  SECADOR'] },
+            { cat: 'PLC', name: 'Modicon PLC (Envasadora 1)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller for cement packing and bagging line 1 (ENV1).', tags: ['PLC ENV1'] },
+            { cat: 'PLC', name: 'Modicon PLC (Envasadora 2 / Silo 28)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller for cement packing line 2 and dispatch from Silo 28.', tags: ['PLC ENV2 SILO28', 'PLC ENV2'] },
+            { cat: 'PLC', name: 'Modicon PLC (Silos 2000)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller for cement storage and dispatch in Silos 2000.', tags: ['PLC SILOS2000'] },
+            { cat: 'PLC', name: 'Modicon PLC (Válvulas Silos 3000)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Controller for cement distribution valves and routing in Silos 3000.', tags: ['PLC VALVULAS SILOS3000', 'PLC VV-S3000'] },
+            { cat: 'PLC', name: 'Modicon PLC (Medidores LCA)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP, Ethernet IP', desc: 'Concentrator controller for electricity meters telemetry in La Calera.', tags: ['PLC MEDIDORS'] },
+            
+            { cat: 'Gateway', name: 'Pasarela Modbus RTU a Modbus TCP (Link150)', mfr: 'Schneider Electric', qty: 2, proto: 'Modbus RTU / Modbus TCP', desc: 'Gateway to integrate serial Coriolis flowmeters into the Ethernet control network.', tags: ['LINK150', 'RED 422/485 LINK150'] },
+            { cat: 'Gateway', name: 'Módulo de E/S Remota Ethernet eX80 (BMECRA31210)', mfr: 'Schneider Electric', qty: 1, proto: 'Ethernet RIO Redundante', desc: 'High-end remote I/O adapter supporting redundant ring topologies for M580.', tags: ['BMECRA31210', 'RED EIO BMECRA31210'] },
+            { cat: 'Gateway', name: 'Módulo de E/S Remota Ethernet X80 (BMXCRA31200)', mfr: 'Schneider Electric', qty: 1, proto: 'Ethernet RIO', desc: 'Remote I/O adapter for secondary racks compatible with M580/M340 (e.g., in M17).', tags: ['BMXCRA31200', 'RED EIO BMXCRA31200'] },
+            { cat: 'Gateway', name: 'Módulo de E/S Remota Quantum (140CRA31200)', mfr: 'Schneider Electric', qty: 1, proto: 'Ethernet RIO (QEIO)', desc: 'Legacy Quantum remote I/O adapter (Quantum Ethernet I/O drop).', tags: ['140CRA31200', 'RED QEIO 140CRA31200'] },
+            { cat: 'Gateway', name: 'Módulo Procesador de E/S Remotas (140CRP31200)', mfr: 'Schneider Electric', qty: 2, proto: 'Ethernet RIO (QEIO) Master', desc: 'Remote I/O head module in the PLC main rack (e.g., in M17 or H9).', tags: ['140CRP31200', 'MASTER QEIO'] },
+            { cat: 'Gateway', name: 'Módulo de Comunicación Ethernet NOC (BMENOC0301)', mfr: 'Schneider Electric', qty: 5, proto: 'Modbus TCP, EtherNet/IP', desc: 'Advanced NOC network module for control and routing in M580 PLC rings.', tags: ['BMENOC0301', 'NOC 0301', 'NOC0301'] },
+            { cat: 'Gateway', name: 'Módulo de Comunicación Ethernet Quantum (140NOE771)', mfr: 'Schneider Electric', qty: 7, proto: 'Modbus TCP', desc: 'NOE Ethernet network module for legacy Quantum CPUs communications.', tags: ['140NOE77101', '140NOE77100', '140NOE771', 'NOE 77100'] },
+            { cat: 'Gateway', name: 'Pasarela Profibus DP a Modbus TCP (TCSEGPA23F14F)', mfr: 'Schneider Electric', qty: 1, proto: 'Profibus DP / Modbus TCP', desc: 'Communication gateway to integrate mills Profibus DP subnets into Ethernet.', tags: ['TCSEGPA23F14F', 'RED PROFIBUS TCSEGPA23F14F'] },
+            { cat: 'Gateway', name: 'Módulo Master Profibus DP Quantum (PTQ-PDPMV1)', mfr: 'ProSoft / Schneider Electric', qty: 1, proto: 'Profibus DP Master', desc: 'Quantum in-rack module for Profibus DP master fieldbus control.', tags: ['PTQPDPMV1', 'MASTER PROFIBUS PTQPDPMV1'] },
+            
+            { cat: 'Switch', name: 'Switch Core Modular Industrial (IKS-6726A)', mfr: 'Moxa', qty: 2, proto: 'Ethernet, F.O., RSTP/VLAN', desc: 'Modular 19-inch rackmount Gigabit switch for the control network Core.', tags: ['IKS6726-2GTXSFP', 'IKS6726A-2GTXSFP', 'SWITCH CORE IKS'] },
+            { cat: 'Switch', name: 'Switch de Distribución 48 Puertos (SF300-48)', mfr: 'Cisco', qty: 1, proto: 'Ethernet, VLAN, STP', desc: '48-port Fast Ethernet switch for distributing network to servers and operator consoles.', tags: ['SF300-48', 'SWITCH SF300-48'] },
+            { cat: 'Switch', name: 'Switch de Anillo Redundante (TCSESM63F2CU1C)', mfr: 'Schneider / Telemecanique', qty: 4, proto: 'Ethernet, ConneXium Fibra', desc: 'Managed switch (DRS) optimized to configure redundant control rings with fiber optics.', tags: ['TCSESM63F2CU1C', 'SWITCH DRS TCSESM63F2CU1C'] },
+            { cat: 'Switch', name: 'Switch DRS 8 Puertos (TCSESM083F2CS0)', mfr: 'Schneider / Telemecanique', qty: 1, proto: 'Ethernet, ConneXium', desc: '8-port managed switch for control sub-rings.', tags: ['TCSESM083F2CS0', 'SWITCH DRS TCSESM083F2CS0'] },
+            { cat: 'Switch', name: 'Switch DRS con 3 Puertos de Fibra (TCSESM83F23FO)', mfr: 'Schneider / Telemecanique', qty: 2, proto: 'Ethernet, Fibra, ConneXium', desc: 'Managed switch with 3 fiber optic interfaces to close long-distance ring links.', tags: ['TCSESM83F23FO', 'TCSESM083F23F0'] },
+            { cat: 'Switch', name: 'Switch Industrial Riel DIN 8P (EDS-208ST)', mfr: 'Moxa', qty: 1, proto: 'Ethernet, F.O. Multimodo', desc: 'Compact unmanaged 8-port industrial switch with fiber uplink for local cabinets.', tags: ['EDS208ST', 'SWITCH EDS208ST'] },
+            { cat: 'Switch', name: 'Switch Industrial Riel DIN (SFN-TX-FX)', mfr: 'Phoenix Contact', qty: 1, proto: 'Ethernet', desc: 'Local DIN rail switch for fast interconnection in field cabinets.', tags: ['SFNPTXFX', 'SWITCH SFNPTXFX'] },
+            { cat: 'Switch', name: 'Switch Gestionado de Medidores (HP 3VLAN)', mfr: 'HP', qty: 1, proto: 'Ethernet, VLAN segmentadas', desc: 'Switch used in the substation to segregate electricity meters traffic into 3 VLANs.', tags: ['SWITCH 3VLAN', 'HP SWITCH 3VLAN'] },
+            { cat: 'Switch', name: 'Conversor de Medios de Fibra (LHC013A-R3)', mfr: 'Black Box', qty: 4, proto: 'Conversión Cobre a Fibra', desc: 'Compact media converter to extend Ethernet links over fiber optics.', tags: ['LHC013A-R3', 'BLACK BOX (15, 17, 18)'] },
+            { cat: 'Switch', name: 'Conversor de Medios Riel DIN (FL MC 1000)', mfr: 'Phoenix Contact', qty: 1, proto: 'Conversión Cobre a Fibra', desc: 'DIN rail media converter for field cabinet installations.', tags: ['FL1000C', 'MEDIA CONVERTER PHOENIX CONTACT'] },
+            { cat: 'Switch', name: 'Conversor de Medios Industrial (IMC-21)', mfr: 'Moxa', qty: 1, proto: 'Conversión Cobre a Fibra SC', desc: 'High-durability industrial media converter for field deployment.', tags: ['IMC21MSCV3.1.4 MOXA', 'MEDIA CONVERTER IMC'] },
+            
+            { cat: 'Instrumento', name: 'Flujómetro Coriolis (Precalentador / Alimentación)', mfr: 'SUPCON / Genérico', qty: 2, proto: 'Modbus RTU / Modbus TCP', desc: 'High-precision Coriolis mass flowmeter for kiln combustion and feed control.', tags: ['CORIOLIS PRE', 'CORIOLIS ALIM', 'CORIOLIS'] },
+            { cat: 'Instrumento', name: 'Analizador de Chimenea CEMS (ACF5000)', mfr: 'ABB', qty: 2, proto: 'Modbus TCP / Analógico', desc: 'High-fidelity FTIR multi-gas CEMS analyzer for emissions monitoring at the preheater stack.', tags: ['ANALIZADOR CHIMENEA', 'ACF5000 ABB', 'CEMS'] },
+            { cat: 'Instrumento', name: 'Analizador de Cinta CNA (PGNAA)', mfr: 'FLSmidth / Sodern', qty: 4, proto: 'Modbus TCP / Integración', desc: 'In-line prompt gamma neutron activation analyzer (PGNAA) on belt 200BC03 for raw mix quality control.', tags: ['CNA AREA 200BC03', 'CNA ANALIZADOR'] },
+            { cat: 'Instrumento', name: 'Controlador de Motor Inteligente TeSys T (LTMR27)', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP / Profibus DP', desc: 'High-precision motor protection and management system for main mill motors.', tags: ['LTMR27', 'TESYS T'] },
+            { cat: 'Instrumento', name: 'Estación Meteorológica Davis Vantage Pro2', mfr: 'Davis Instruments', qty: 1, proto: 'Serial / TCP Converter', desc: 'Weather station for measuring environmental variables (wind, temp, pressure, humidity).', tags: ['ESTACION METEOROLOGICA', 'DAVIS VANTAGE'] },
+            { cat: 'Instrumento', name: 'Sistema de Dosificación Schenck', mfr: 'Schenck Process', qty: 2, proto: 'Profibus DP / Analógico', desc: 'Integrator belt scales and weighing systems for accurate raw material dosing.', tags: ['AREA SCHENCK', 'SCHENCK'] },
+            { cat: 'Instrumento', name: 'Dosificador de Carbón Rotorfeeder Pfister CAS', mfr: 'FLSmidth Pfister', qty: 1, proto: 'Profibus DP / Dedicado', desc: 'High-precision gravimetric weighing rotor feeder for dosing pulverized coal to the kiln.', tags: ['PFISTER CAS', 'PFISTER'] },
+            { cat: 'Instrumento', name: 'Cañones de Aire Big Blaster', mfr: 'Martin Engineering', qty: 1, proto: 'Control Solenoide PLC', desc: 'High-pressure pneumatic air cannons to eliminate clogging and material buildup in silos and chutes.', tags: ['BIG BLASTER'] },
+            { cat: 'Instrumento', name: 'Medidores de Energía Eléctrica IP', mfr: 'Schneider Electric', qty: 1, proto: 'Modbus TCP', desc: 'Multi-meters for electrical variables to monitor consumption and power factor.', tags: ['RED MEDIDORES', 'MEDIDORS ELECTRICO'] },
+            
+            { cat: 'Servidor', name: 'Servidor Real-time Data (API-Node PI System)', mfr: 'OSIsoft / HP', qty: 2, proto: 'TCP/IP, OPC DA/UA', desc: 'Real-time data acquisition node server for the OSIsoft PI System in the H9 area.', tags: ['SERVIDOR API-NODE', 'API-NODE H9', 'PI LA CALERA'] },
+            { cat: 'Servidor', name: 'Servidores de SCADA FLSmidth ECS (ECSSVR01 / ECSSVR02)', mfr: 'FLSmidth', qty: 2, proto: 'TCP/IP Redundante', desc: 'Redundant servers running the FLSmidth ECS/process expert SCADA supervision system.', tags: ['ECSSVR01', 'ECSSVR02', 'SERVIDOR ECSSVR'] },
+            { cat: 'Servidor', name: 'Servidor de Control de Calidad de Laboratorio (FLS-QCX)', mfr: 'FLSmidth', qty: 1, proto: 'TCP/IP', desc: 'Server running the QCX (Quality Control by Computer and X-Ray) system for chemical/physical laboratory analysis.', tags: ['FLS-QCX', 'SERVIDOR FLS-QCX'] },
+            { cat: 'Servidor', name: 'Servidores de Sistema Experto PXP (Horno / Molinos)', mfr: 'FLSmidth', qty: 2, proto: 'TCP/IP, Integración', desc: 'Servers executing the FLSmidth PXP expert system for real-time kiln and mill optimization.', tags: ['PXP HORNO', 'PXP MOLINOS', 'SERVIDOR PXP'] },
+            { cat: 'Servidor', name: 'Almacenamiento en Red NAS (QNAP)', mfr: 'QNAP', qty: 1, proto: 'NFS, SMB/CIFS, TCP/IP', desc: 'NAS unit for redundant storage of SCADA databases, PI, and historical backups.', tags: ['NAS QNAP', 'SERVIDOR NAS/QNAP'] }
+        ];
+
+        // On Load
+        document.addEventListener("DOMContentLoaded", () => {
+            // Add SUPCON recommendations to rawInventory dynamically based on SUPCON Skills
+            rawInventory.forEach(item => {
+                if (item.cat === 'PLC') {
+                    if (item.name.includes('M580') || item.name.includes('H9') || item.name.includes('Combustibles') || item.name.includes('Alimentación')) {
+                        item.recom = 'SUPCON UCS Nyx (Virtual controller with N:1 redundancy on NyxOS)';
+                    } else if (item.name.includes('Quantum')) {
+                        item.recom = 'DCS SUPCON ECS-700 (Migration with 300ms AI721-S card)';
+                    } else {
+                        item.recom = 'DCS SUPCON ECS-700 (Centralized replacement and unifications)';
+                    }
+                } else if (item.cat === 'Instrumento') {
+                    if (item.name.includes('Coriolis')) {
+                        item.recom = 'SUPCON SFC Coriolis (Native Modbus TCP, ±0.1% accuracy)';
+                    } else if (item.name.includes('Big Blaster')) {
+                        item.recom = 'Discrete control via DO711-S outputs on ECS-700';
+                    } else if (item.name.includes('TeSys T') || item.name.includes('Pfister') || item.name.includes('Schenck')) {
+                        item.recom = 'Integration to ECS-700 DCS via master Profibus DP';
+                    } else {
+                        item.recom = 'Native integration to central supOS platform';
+                    }
+                } else if (item.cat === 'Gateway') {
+                    if (item.name.includes('Link150')) {
+                        item.recom = 'Eliminated (Replaced by SFC Coriolis with native Ethernet port)';
+                    } else if (item.name.includes('eX80') || item.name.includes('X80') || item.name.includes('CRA') || item.name.includes('CRP')) {
+                        item.recom = 'Replaced by ECS-700 redundant RIO or UCS Nyx APL SmartEIO';
+                    } else if (item.name.includes('TCSEGPA')) {
+                        item.recom = 'Eliminated (Direct Profibus connection to card in ECS-700 DCS)';
+                    } else {
+                        item.recom = 'Redundant I/O / RIO module of ECS-700 DCS';
+                    }
+                } else if (item.cat === 'Servidor') {
+                    if (item.name.includes('PXP')) {
+                        item.recom = 'Replaced by SUPCON APC-Cement Suite (MPC/RTO) on supOS';
+                    } else if (item.name.includes('PI') || item.name.includes('SCADA') || item.name.includes('QCX')) {
+                        item.recom = 'Native integration in supOS (Predictive maintenance with PRIDE)';
+                    } else {
+                        item.recom = 'Integration in supOS / Nyx HMI with XR support';
+                    }
+                } else if (item.cat === 'Switch') {
+                    if (item.name.includes('Core') || item.name.includes('SF300')) {
+                        item.recom = 'SUPCON Redundant Core Switch (IKS Series)';
+                    } else if (item.name.includes('DRS') || item.name.includes('EDS') || item.name.includes('SFN')) {
+                        item.recom = 'SUPCON Industrial Managed Switch (Redundant ring <20ms)';
+                    } else if (item.name.includes('Conversor')) {
+                        item.recom = 'Eliminated (Direct connection to SFP ports on SUPCON switches)';
+                    } else {
+                        item.recom = 'SUPCON Managed Switch (VLAN & QoS configuration)';
+                    }
+                }
+            });
+            renderTable(rawInventory);
+        });
+
+        // Tab Switching
+        function switchTab(tabId, btn) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            // Show target
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Render Table Data
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                document.getElementById('no-results-msg').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('no-results-msg').style.display = 'none';
+            }
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                // Category Badge Class
+                let badgeClass = item.cat.toLowerCase();
+                if (badgeClass.includes('instrumento')) badgeClass = 'instrument';
+                
+                // Tags HTML
+                const tagsHtml = item.tags.map(t => `<span class="tag-pill">${t}</span>`).join(' ');
+                
+                tr.innerHTML = `
+                    <td><span class="badge ${badgeClass}">${item.cat === 'Instrumento' ? 'Instrument' : item.cat === 'Servidor' ? 'Server' : item.cat}</span></td>
+                    <td style="font-weight: 600; color: var(--text-primary);">${item.name}</td>
+                    <td>${item.mfr}</td>
+                    <td class="qty-cell">${item.qty}</td>
+                    <td style="font-family: 'Courier New', Courier; font-size:12.5px;">${item.proto}</td>
+                    <td>${item.desc}</td>
+                    <td style="color: var(--accent-green); font-weight: 600;">${item.recom || 'Direct Integration'}</td>
+                    <td><div class="tag-list">${tagsHtml}</div></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filter Table on Search Input
+        function filterTable() {
+            const query = document.getElementById('search-box').value.toLowerCase();
+            const activeChip = document.querySelector('.filter-chip.active').textContent;
+            
+            let filtered = rawInventory.filter(item => {
+                const matchQuery = item.name.toLowerCase().includes(query) || 
+                                   item.mfr.toLowerCase().includes(query) || 
+                                   item.proto.toLowerCase().includes(query) || 
+                                   item.desc.toLowerCase().includes(query) || 
+                                   item.tags.some(t => t.toLowerCase().includes(query));
+                
+                if (activeChip === 'All') return matchQuery;
+                
+                let categoryMatch = false;
+                if (activeChip === 'PLCs' && item.cat === 'PLC') categoryMatch = true;
+                if (activeChip === 'Switches & F.O.' && item.cat === 'Switch') categoryMatch = true;
+                if (activeChip === 'Gateways & Net' && item.cat === 'Gateway') categoryMatch = true;
+                if (activeChip === 'Instrumentation / CEMS' && item.cat === 'Instrumento') categoryMatch = true;
+                if (activeChip === 'Servers' && item.cat === 'Servidor') categoryMatch = true;
+                
+                return matchQuery && categoryMatch;
+            });
+            
+            renderTable(filtered);
+        }
+
+        // Filter by Category Chips
+        function filterByChip(cat, chip) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            filterTable();
+        }
+
+        // Filter by clicking on the top stats cards
+        function filterByCategory(category, card) {
+            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            
+            // Switch to inventory tab
+            switchTab('tab-inventory', document.querySelectorAll('.tab-btn')[1]);
+            
+            // Map card click to category chip filter
+            let chipIndex = 0; // All
+            if (category === 'PLC') chipIndex = 1;
+            if (category === 'Switch') chipIndex = 2;
+            if (category === 'Instrumento') chipIndex = 4;
+            if (category === 'Servidor') chipIndex = 5;
+            
+            const targetChip = document.querySelectorAll('.filter-chip')[chipIndex];
+            filterByChip(category, targetChip);
+        }
+
+        // SVG Diagram Interactive Clicks
+        const nodeDetails = {
+            'sw-core-moxa': {
+                title: 'Modular Industrial Core Switch (IKS-6726A)',
+                mfr: 'Moxa / Recommended Replacement: SUPCON IKS Core Series',
+                proto: 'Gigabit Ethernet, F.O. (SFP), RSTP, VLAN, SNMP, G3 Conformal Coating',
+                qty: '2 physical redundant units in Core',
+                desc: 'Redundant modular Gigabit switches in the server room. They concentrate the fiber optic rings from the entire plant and link with the commercial IT network. Supports Turbo Ring/Turbo Chain with recovery times < 20 ms.',
+                action: 'SUPCON MODERNIZATION: Suffix industrial core switches with G3 coating (mandatory for corrosive cement environments) and high-efficiency dual power supplies.'
+            },
+            'sw-core-cisco': {
+                title: 'Cisco Distribution Switch (SF300-48)',
+                mfr: 'Cisco / Recommended Replacement: SUPCON Core Distribution Switch',
+                proto: 'Ethernet TCP/IP, VLAN, STP, QoS',
+                qty: '1 physical unit in Server Room',
+                desc: 'Managed 48-port rackmount switch. Distributes control network traffic to SCADA servers (ECS), PI history servers, laboratory quality servers (QCX), and HMI operator consoles.',
+                action: 'SUPCON MODERNIZATION: Replace with SUPCON industrial 48-port Gigabit L2/L3 managed switch for enhanced bandwidth, G3 protection, and industrial cybersecurity hardening.'
+            },
+            'sw-drs-cal': {
+                title: 'DRS Switch Cal Room (TCSESM63F2CU1C)',
+                mfr: 'Schneider Electric / Recommended Replacement: SUPCON DRS Switch',
+                proto: 'Fast Ethernet (100Base-FX/TX), Ring Redundancy (DRS)',
+                qty: '1 ring switch in Cal Room Electrical Room',
+                desc: 'Managed Dual Ring Switch (DRS) connecting instrumentation and remote racks in the Cal Room. It has a broken link to the CAS Room, violating network redundancy.',
+                action: 'TURN-KEY OPPORTUNITY: Lay the missing fiber optic link and supply a SUPCON industrial managed switch on DIN rail with <20 ms ring recovery time.'
+            },
+            'sw-drs-cas': {
+                title: 'DRS Switch CAS Room (TCSESM83F23FO)',
+                mfr: 'Schneider Electric / Recommended Replacement: SUPCON DRS Switch',
+                proto: 'Fast Ethernet, 3 Fiber Optic Ports',
+                qty: '1 switch in CAS Electrical Room (Pfister CAS)',
+                desc: 'Managed switch equipped with 3 fiber ports to support long-distance ring links. Connects the Pfister CAS feeder and has a broken fiber link to the Cal Room.',
+                action: 'TURN-KEY OPPORTUNITY: Close the fiber optic ring loop via cabling and fusion splicing, and reconfigure RSTP/ERPS using SUPCON managed switches.'
+            },
+            'sw-drs-h9': {
+                title: 'DRS Switch Kiln H9 (TCSESM63F2CU1C)',
+                mfr: 'Schneider Electric / Recommended Replacement: SUPCON DRS G3 Switch',
+                proto: 'Ethernet TCP/IP, Redundant Ring Master/Slave VLAN',
+                qty: '1 switch (H9 Master Ring VLAN)',
+                desc: 'Main ring switch for the H9 kiln area. Connects the H9 PLC, weighing feed PLC, alternative fuels PLC, and Link150 gateways for Coriolis flowmeters.',
+                action: 'SUPCON OPPORTUNITY: Connect new SUPCON SFC Coriolis flowmeters directly via Ethernet TCP/IP to this switch, eliminating old serial gateways.'
+            },
+            'plc-h9': {
+                title: 'Kiln H9 Control Rack (Modicon M580)',
+                mfr: 'Schneider Electric / Expert Recommendation: SUPCON UCS Nyx',
+                proto: 'Modbus TCP, EtherNet/IP',
+                qty: '1 main M580 PLC + 1 Feed PLC + 1 Alternative Fuels PLC',
+                desc: 'Modicon M580 controller with NOC 0301 card. Controls combustion, alternative co-processing fuels, and weighing feed for Kiln 9. Highly critical process exposed to plant stops.',
+                action: 'EXPERT RECOMMENDATION: Migrate to **SUPCON UCS Nyx (Software-Defined Universal Control System)** running on **NyxOS** with N:1 virtual redundancy and field-distributed **APL SmartEIO** 2-wire modules. This completely eliminates marshalling cabinets, reducing cabling and engineering by 40%.'
+            },
+            'plc-m21': {
+                title: 'Cement Mill 21 Controller (Quantum)',
+                mfr: 'Schneider Electric / Recommended Replacement: SUPCON ECS-700 DCS',
+                proto: 'Modbus TCP (via NOE 771 card), Profibus DP (via PTQ module)',
+                qty: '1 legacy Quantum PLC in M21',
+                desc: 'Legacy Quantum PLC (140CPU65150) with NOE Ethernet card. Uses a Profibus DP bus to read dosing, Schenck belt scales, and TeSys T motor protections.',
+                action: 'MIGRATION PROPOSAL: Replace with **SUPCON ECS-700 High-Availability DCS** featuring **AI721-S** isolated analog cards (300ms fast sampling, channel-to-channel isolation) and G3 anti-corrosion coating.'
+            },
+            'plc-m22': {
+                title: 'Cement Mill 22 Controller (Quantum)',
+                mfr: 'Schneider Electric / Recommended Replacement: SUPCON ECS-700 DCS',
+                proto: 'Modbus TCP (via NOE 771 card), Profibus DP',
+                qty: '1 legacy Quantum PLC in M22',
+                desc: 'Legacy Quantum PLC (140CPU65160) with NOE Ethernet card for Cement Mill 22 control.',
+                action: 'MIGRATION PROPOSAL: Consolidated technological migration to **SUPCON ECS-700 DCS**, integrating weighing scales and motor telemetry under a unified control environment.'
+            },
+            'gw-link150': {
+                title: 'Modbus RTU to Modbus TCP Link150 Gateway',
+                mfr: 'Schneider Electric / SUPCON Solution: Native Ethernet Connection',
+                proto: 'Modbus RTU (RS-485 serial) / Modbus TCP (Ethernet)',
+                qty: '2 physical units in H9 cabinets',
+                desc: 'Gateway encapsulating serial Coriolis flowmeter data to Ethernet. A notorious point of failure due to high electromagnetic interference (EMI) around the kiln.',
+                action: 'SUPCON RECOMMENDATION: Eliminate gateways. Propose **SUPCON SFC Coriolis Flowmeter** with native Ethernet TCP/IP port, or **1" Venturi + SUPCON CXT DP Transmitter** (monocrystalline composite sensor, ±0.035% accuracy, gold-plated diaphragms, SIL3, ATEX, remotely mounted).'
+            },
+            'inst-coriolis-pre': {
+                title: 'Preheater Coriolis Flowmeter (PRE)',
+                mfr: 'Mass Flowmeter / Recommended Replacement: SUPCON SFC Coriolis',
+                proto: 'Modbus RTU (RS-422/485 serial)',
+                qty: '1 in-line mass flowmeter',
+                desc: 'Critical Coriolis meter dosing fuel to the preheater burner. Suffers from serial communication drops caused by high EMI from nearby variable frequency drives.',
+                action: 'SUPCON PROPOSAL: Replace with **SUPCON SFC Coriolis** flowmeter with advanced DSP processing for high vibration and native Ethernet Modbus TCP communication.'
+            },
+            'inst-coriolis-alim': {
+                title: 'Kiln Feed Coriolis Flowmeter (ALIM)',
+                mfr: 'Mass Flowmeter / Recommended Replacement: SUPCON SFC Coriolis',
+                proto: 'Modbus RTU (RS-422/485 serial)',
+                qty: '1 in-line mass flowmeter',
+                desc: 'Coriolis meter for coal feed to the kiln. Prone to serial packet drops and gateway saturation on the Link150.',
+                action: 'SUPCON PROPOSAL: Replace with **SUPCON SFC Coriolis** flowmeter with native Ethernet transmission directly to the ring switch.'
+            },
+            'srv-pxp': {
+                title: 'FLSmidth PXP Expert System Servers',
+                mfr: 'FLSmidth / Recommended Replacement: SUPCON APC-Cement + supOS',
+                proto: 'TCP/IP, OPC UA/DA Integration',
+                qty: '2 physical servers (PXP Kiln and PXP Mills)',
+                desc: 'Servers executing expert rules to optimize kiln combustion and cement fineness. The client is losing license support.',
+                action: 'SUPCON PROPOSAL: Replace with **SUPCON APC-Cement** suite (Multivariable Predictive Control MPC) running on **supOS** platform. Integrates **PRIDE** for online predictive blockage diagnostics on CXT transmitters and valve wear on **CVP2000** positioners.'
+            },
+            'srv-pi': {
+                title: 'OSIsoft PI System API-Node Server',
+                mfr: 'OSIsoft PI System / Native supOS Integration',
+                proto: 'OPC DA, OPC UA, TCP/IP',
+                qty: '1 real-time data acquisition server',
+                desc: 'Concentrator server collecting historical process variables in real-time and feeding the corporate PI System.',
+                action: 'SUPCON INTEGRATION: Both ECS-700 and UCS Nyx feed the corporate PI System natively via the Data Resource System (DRS) built into the supOS platform.'
+            },
+            'link-broken-detail': {
+                title: 'Missing Fiber Optic Link (Cal Room - CAS Room)',
+                mfr: 'Physical Communication Link',
+                proto: 'Fiber Optic Monomodo/Multimodo',
+                qty: '1 broken (missing) link',
+                desc: 'The drawing documents a missing fiber link between Cal Room and CAS Room, leaving the DRS switches operating linearly with zero tolerance to single network cable cuts.',
+                action: 'SUPCON PROPOSAL: Turn-key supply of fiber cable, trenching, fusion splicing, and ring configuration with **SUPCON industrial managed switches** (<20ms recovery).'
+            }
+        };
+
+        function showNodeDetails(nodeId) {
+            const detail = nodeDetails[nodeId];
+            if (!detail) return;
+            
+            const titleEl = document.getElementById('detail-title');
+            const bodyEl = document.getElementById('detail-body');
+            
+            titleEl.textContent = detail.title;
+            bodyEl.innerHTML = `
+                <div class="node-detail-field">
+                    <span class="label">Manufacturer / Replacement</span>
+                    <span class="value">${detail.mfr}</span>
+                </div>
+                <div class="node-detail-field">
+                    <span class="label">Protocol / Network</span>
+                    <span class="value">${detail.proto}</span>
+                </div>
+                <div class="node-detail-field">
+                    <span class="label">Quantity in Drawing</span>
+                    <span class="value">${detail.qty}</span>
+                </div>
+                <div class="node-detail-field">
+                    <span class="label">Operational Description</span>
+                    <div class="desc">${detail.desc}</div>
+                </div>
+                <div class="node-detail-field" style="margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                    <span class="label" style="color: var(--accent-green);">SUPCON Solution / Opportunity</span>
+                    <div class="desc" style="color: var(--text-primary); font-weight: 500;">${detail.action}</div>
+                </div>
+            `;
+        }
+
+        // Copy Email to Clipboard
+        function copyEmailToClipboard() {
+            const emailText = document.getElementById('email-text').innerText;
+            navigator.clipboard.writeText(emailText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
+                btn.style.background = 'linear-gradient(135deg, #10b981 0%, #10b981 100%)';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'linear-gradient(135deg, var(--accent-green) 0%, #059669 100%)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error copying text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

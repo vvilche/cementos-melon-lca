@@ -1219,63 +1219,65 @@
                 </div>
             </div>
         </div>
-
-        <!-- TAB CONTENT 4: MINUTA Y FICHA -->
         <div id="tab-minutes" class="tab-content">
             <div class="minuta-container">
                 <!-- Left: Minutes HTML -->
                 <div class="panel-card minuta-content">
                     <h2 class="panel-title">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        Minuta Técnica y Comercial: Diagnóstico Cementos Melón S.A.
+                        Minuta de Trabajo y Oportunidades Comerciales
                     </h2>
                     
-                    <h2>1. Contexto y Diagnóstico Tecnológico</h2>
-                    <p>En base a la correspondencia sostenida y al análisis del plano de arquitectura de comunicaciones <strong>"RedControl LCA_Rev0"</strong> de la Planta La Calera, se presenta el catastro consolidado de su infraestructura tecnológica y sus puntos críticos de falla.</p>
+                    <h2>1. Ficha Técnica y Diagnóstico de Arquitectura</h2>
+                    <p>En base al plano de ingeniería <strong>"RedControl LCA_Rev0"</strong>, Planta La Calera opera con una arquitectura mixta Schneider Electric (PLCs Quantum y M580) con enlaces de fibra y switches redundantes DRS ConneXium. Se ha identificado una desconexión crítica entre la <strong>Sala de Cal</strong> y la <strong>Sala CAS</strong> que rompe la redundancia física del anillo de control.</p>
                     
                     <div class="alert-box note">
-                        <div class="alert-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                            Situación de la Planta La Calera (LCA)
-                        </div>
-                        Control concentrado en una arquitectura mixta de controladores Schneider Electric Modicon Quantum y M580 redundantes. La planta opera mediante switches industriales de core Moxa y un lazo de switches Schneider DRS en topología de anillo. El sistema de supervisión SCADA es ECS/process expert de FLSmidth, integrado con bases de datos real-time OSIsoft PI y sistemas de optimización experta.
+                        <div class="alert-title">Ficha Técnica de Cementos Melón S.A.</div>
+                        <ul>
+                            <li><strong>Planta:</strong> Planta La Calera (LCA), Región de Valparaíso, Chile.</li>
+                            <li><strong>Capa de Control:</strong> Modicon M580 (Horno H9 con NOC 0301) y Quantum (Molinos 21/22 con buses Profibus y protectores TeSys T).</li>
+                            <li><strong>Capa de Red:</strong> Switches Core Moxa IKS-6726A y switches de distribución Schneider TCSESM.</li>
+                        </ul>
                     </div>
 
-                    <h2>2. Principales Puntos de Dolor y Oportunidades para SUPCON</h2>
+                    <h2>2. Puntos de Dolor y Soluciones de Ingeniería SUPCON</h2>
                     
-                    <div class="alert-box caution">
-                        <div class="alert-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 22 22 22"></polygon><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            Punto Crítico 1: Pérdida de Licencias del Sistema Experto (FLSmidth PXP)
-                        </div>
-                        El plano de la red muestra la presencia física de dos servidores dedicados: <strong>`SERVIDOR PXP HORNO`</strong> y <strong>`SERVIDOR PXP MOLINOS`</strong>. La pérdida de licenciamiento de FLSmidth PXP representa un riesgo inminente para la estabilidad y eficiencia del horno y los Molinos 21/22.  
-                        <br><strong>Solución SUPCON:</strong> Reemplazo directo con la suite de optimización avanzada **SUPCON APC-Cement**. Se conecta a nivel de red con el SCADA ECS e históricos de planta, aportando algoritmos de control predictivo multivariable (MPC) que incrementan la producción (t/h) y reducen el consumo energético (térmico/eléctrico), sin requerir reprogramación de los PLCs.
-                    </div>
-
                     <div class="alert-box warning">
-                        <div class="alert-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            Punto Crítico 2: Problema en la Medición de los Flujómetros Coriolis (H9)
-                        </div>
-                        El plano expone que los flujómetros Coriolis de Precalentador y Alimentación (`CORIOLIS PRE` y `CORIOLIS ALIM`) están acoplados a la red mediante pasarelas seriales <strong>Link150 (Modbus RTU RS-485 a Modbus TCP)</strong>. En plantas de cemento, los altos campos de interferencia electromagnética (EMI) de motores y variadores inducen fallos de comunicación en tendidos de cables seriales, provocando caídas de señal y saturación de la pasarela por peticiones concurrentes del PLC y el servidor PI.
-                        <br><strong>Solución SUPCON:</strong> Modernización con **flujómetros Coriolis SUPCON (Serie SFC)** de procesamiento digital DSP inmunes al ruido electromagnético y con comunicación Ethernet nativa (Modbus TCP/Profinet) conectada directamente al switch de anillo, eliminando gateways e intermediarios.
+                        <div class="alert-title">Oportunidad 1: Medición de Flujo en Bypass / Purga (Horno H9)</div>
+                        El flujómetro original E-T-A FC01-CA de 1" sufrió daños por caída de personal en una línea de 100 mBar con alta temperatura, polvo abrasivo CKD y cloro altamente corrosivo.
+                        <br><strong>Solución SUPCON:</strong> 
+                        <ul>
+                            <li><strong>Alternativa A (La Recomendada): Tubo Venturi 1" + Transmisor de Presión Diferencial SUPCON CXT.</strong> Elemento primario Venturi de acero sólido en línea (sin partes móviles, inmune a incrustaciones y corrosión). El **transmisor inteligente SUPCON CXT se monta de forma remota** en una zona protegida. El CXT ofrece precisión de **$\pm0.035\%$**, estabilidad de 10 años, **diafragmas chapados en oro** para resistir el cloro, y certificaciones SIL3 y ATEX/IECEx.</li>
+                            <li><strong>Alternativa B: Flujómetro de Masa Térmica In-Line SUPCON SRF-I.</strong> Cuerpo sólido bridado de tubería de 1" (resistente a golpes) con sensor en **Hastelloy C-276** y recubrimiento cerámico protector.</li>
+                        </ul>
                     </div>
 
                     <div class="alert-box caution">
-                        <div class="alert-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                            Punto Crítico 3: Discontinuidad Física del Anillo de Red
-                        </div>
-                        Existe una desconexión explícita documentada como <strong>`"TRAMO FALTANTE FIBRA OPTICA SALA CAL Y SALA CAS"`</strong>. Esto rompe la topología en anillo de los switches redundantes de Schneider, dejando a la red sin tolerancia a fallas de enlace simples.
-                        <br><strong>Solución SUPCON:</strong> Ejecución del tendido de fibra óptica faltante y el suministro de switches gestionados de SUPCON con protocolo de recuperación redundante ultra-rápido (<20 ms).
+                        <div class="alert-title">Oportunidad 2: Reemplazo del Sistema Experto (FLSmidth PXP) e Inteligencia de Activos</div>
+                        El cliente perderá el licenciamiento de los servidores `PXP HORNO` y `PXP MOLINOS` de FLSmidth.
+                        <br><strong>Solución SUPCON:</strong> Implementar la suite de Control Avanzado **SUPCON APC-Cement** (MPC/RTO) sobre la plataforma de datos central **supOS** (sistema operativo industrial "1+2+N") para optimizar de forma autónoma el horno H9 y los molinos 21/22, aumentando la t/h y reduciendo el consumo energético en un 3% - 5%. Se complementa con la suite de inteligencia **PRIDE** para el diagnóstico predictivo online de obstrucción de cañerías de impulsión en los transmisores CXT y fricción mecánica en las válvulas mediante posicionadores **CVP2000**.
                     </div>
 
-                    <h2>3. Plan de Acción y Próximos Pasos</h2>
+                    <div class="alert-box tip">
+                        <div class="alert-title">Oportunidad 3: Vulnerabilidad de Red (Cierre de Anillo de Fibra)</div>
+                        Falta el tramo físico de fibra entre la Sala Cal y la Sala CAS, dejando a los switches DRS operando de forma lineal sin tolerancia a fallas simples.
+                        <br><strong>Solución SUPCON:</strong> Ingeniería, tendido y fusión de fibra óptica llave en mano, instalando switches gestionados de anillo SUPCON con recuperación ultra-rápida menor a 20 ms.
+                    </div>
+
+                    <h2>3. Modernización de Control: DCS ECS-700 vs. UCS Nyx</h2>
+                    <p>Para la migración y modernización de los PLCs obsoletos Quantum y M580, el equipo de expertos propone dos alternativas de vanguardia:</p>
                     <ul>
-                        <li><strong>Reunión Técnica Comercial:</strong> Presentar las credenciales de SUPCON en Control Avanzado (APC-Cement) y los flujómetros Coriolis avanzados.</li>
-                        <li><strong>Estudio de Viabilidad (Feasibility Study):</strong> Ofrecer un análisis de viabilidad sin costo inicial sobre los datos del Horno y Molinos 21/22 para proyectar el retorno de inversión (ROI) con la suite APC de SUPCON.</li>
-                        <li><strong>Estudio Técnico de Flujo:</strong> Analizar las hojas de datos de los medidores seriales actuales en cuanto Víctor comparta el correo reenviado con los detalles del problema.</li>
+                        <li><strong>DCS SUPCON ECS-700 (Tradicional de Alta Confiabilidad):</strong> Sistema estrella con 30k referencias globales. Cuenta con recubrimiento de protección anticorrosiva **clase G3** y tarjetas de entrada **AI721-S** (8 canales para termocupla con **aislamiento canal a canal** y muestreo rápido a **300 ms**).</li>
+                        <li><strong>SUPCON UCS Nyx (La Recomendación Generacional):</strong> Sistema de Control Universal **definido por software** corriendo sobre **NyxOS** (RTOS en contenedores, disponibilidad del 99.99%, redundancia N:1 que levanta un respaldo en <1 segundo). Utiliza el ecosistema **Ethernet-APL SmartEIO** (módulos de 16 E/S en campo de dos hilos con señales configuradas por software). **Elimina al 100% los gabinetes de marshalling**, reduciendo el CAPEX y permitiendo el mantenimiento en caliente e intrínsecamente seguro en campo.</li>
                     </ul>
+
+                    <h2>4. Estrategia Comercial (Metodología CONECTA)</h2>
+                    <div class="alert-box tip">
+                        <div class="alert-title">Posicionamiento y Técnica de Barrera</div>
+                        *   **Matriz RAIDS:** Mapeo de Recomendador (Víctor Vilches), Autoridad (Jefe de Control Planta), Decisor (Gerente de Operaciones) y Sponsor (Ingeniero de Mantenimiento).
+                        *   **El TRIVECTOR de Venta:** (1) Ahorro de CAPEX con UCS Nyx y Ethernet-APL, (2) Robustez física/química de CXT con diafragma de oro y montaje remoto, y (3) Inteligencia de activos con APC-Cement y PRIDE.
+                        *   **Técnica de Barrera (Turn-key MAC):** Presentar la oferta como un contrato unificado MAC (Main Automation Contractor) que integre la obra de fibra, migración de control, instrumentación y optimización avanzada de cemento en un solo alcance. Esto fuerza a competidores como Emerson Chile (con lead times de **14 semanas** para importación de gabinetes) a subcontratar integraciones de terceros, elevando sus precios y reduciendo su agilidad.
+                    </div>
                 </div>
 
                 <!-- Right: Email Copy Panel -->
@@ -1287,24 +1289,49 @@
                             Copiar Correo
                         </button>
                     </div>
-                    <div class="email-body" id="email-text">Asunto: Propuestas de Optimización, Redundancia de Red e Instrumentación Coriolis - Planta La Calera Melón
+                    <div class="email-body" id="email-text">Asunto: Propuestas de Optimización, Redundancia de Red e Instrumentación de Flujo para Bypass - Planta La Calera Melón
 
 Estimado [Nombre del Contacto],
 
-Agradezco enormemente su respuesta detallada y el envío del plano de arquitectura "RedControl LCA_Rev0" de la Planta La Calera. Nuestro equipo de ingeniería ha revisado en detalle el diagrama unilineal y la distribución de sus sistemas de control. 
+Junto con saludar, y agradeciendo la información técnica provista y el plano de arquitectura "RedControl LCA_Rev0", nuestro equipo de ingenieros de aplicaciones de SUPCON, en conjunto con nuestro socio local CONECTA Ingeniería, ha elaborado una propuesta de vanguardia tecnológica para abordar los desafíos operativos de la Planta La Calera.
 
-En base a este análisis técnico de su arquitectura (basada en switches de core Moxa, anillos de distribución Schneider TCSESM, y la base de PLCs Quantum y M580), hemos identificado tres áreas críticas donde SUPCON puede aportar soluciones de alto valor e impacto inmediato para sus operaciones:
+En particular, hemos estructurado tres soluciones clave que transformarán la disponibilidad, la robustez de proceso y la eficiencia energética de sus instalaciones:
 
-1. Alternativa para el Reemplazo del Sistema Experto (PXP):
-Observamos que áreas de alta criticidad como el Horno (asociado al PLC H9) y los Molinos 21 y 22 (soportados por PLCs Quantum con buses Profibus) son candidatos ideales para la implementación de nuestra suite de Control Avanzado de Procesos SUPCON APC-Cement. Dado el próximo vencimiento de sus licencias de FLSmidth PXP, nuestra suite —basada en Control Predictivo Multivariable (MPC)— puede integrarse de manera transparente con su plataforma actual (incluyendo los nuevos PLCs M580 y el Servidor API-Node PI de H9) para estabilizar la operación del horno y maximizar la eficiencia energética y la capacidad de producción (t/h) de los molinos. Nos gustaría proponerle un estudio de viabilidad técnica (Feasibility Study) sin costo comercial inicial para evaluar el retorno de inversión en estas unidades.
+1. Reemplazo del Medidor de Aire/Gas de 1" en Bypass (Horno H9)
+Conociendo las condiciones severas de su proceso (exposición directa a alta temperatura, polvo altamente abrasivo CKD y corrosión química por concentraciones de Cloro), proponemos dos alternativas de alta durabilidad con salida 4-20 mA + HART:
+* Alternativa A (La Recomendada por Robustez Física y de Proceso): Sistema Venturi de Acero Sólido + Transmisor de Presión Diferencial Inteligente SUPCON CXT
+Consiste en instalar un tubo Venturi robusto de acero de gran espesor en la línea (sin partes móviles ni sensores internos que puedan desgastarse o acumular CKD). La medición se transmite mediante capilares al transmisor inteligente SUPCON CXT montado de forma remota y protegida contra caídas o golpes físicos. Este transmisor destaca por su precisión de ±0.035%, estabilidad garantizada por 10 años y diafragmas chapados en oro para neutralizar completamente el ataque del Cloro.
+* Alternativa B (Reemplazo Directo de Alta Sensibilidad): Medidor de Masa Térmica In-Line SUPCON SRF-I
+Cuerpo sólido de tubería bridadizada de 1" altamente resistente a impactos mecánicos externos. Para asegurar su vida útil frente al CKD y el cloro, el sensor interno se suministra con vaina de Hastelloy C-276 y recubrimiento cerámico protector de alta dureza.
 
-2. Solución Integral al Problema de Medición en los Flujómetros Coriolis (H9):
-En el plano identificamos las líneas de medición seriales RS-422/485 conectadas a través de pasarelas Link150 (CORIOLIS PRE y CORIOLIS ALIM) hacia el PLC H9. En procesos cementeros, esta arquitectura suele presentar inconvenientes debido a la inducción de ruido electromagnético en los lazos seriales o a la saturación de las pasarelas por consultas concurrentes del PLC y sistemas de información como PI. Para resolver esto de raíz, en SUPCON proponemos el uso de nuestros Coriolis de la serie SFC, los cuales cuentan con procesamiento digital de señales (DSP) de alta inmunidad al ruido y opción de comunicación Ethernet nativa (Modbus TCP/Profinet), eliminando intermediarios y garantizando la estabilidad de la lectura de flujo y densidad en condiciones severas.
+2. Salto Tecnológico en Control: Sistema de Control Universal SUPCON UCS Nyx
+Para la migración de sus PLCs Quantum y M580 del Horno y Molienda detallados en su plano, ponemos a su disposición una tecnología disruptiva que supera a los DCS tradicionales:
+* Control Definido por Software: Controladores virtualizados corriendo bajo el sistema operativo en tiempo real NyxOS, con redundancia N:1 dinámica (respaldo activo en menos de 1 segundo).
+* Ecosistema APL SmartEIO: Módulos de E/S distribuidos en campo con tecnología Ethernet-APL de dos hilos. Esta tecnología elimina por completo los gabinetes de marshalling intermedios, reduciendo drásticamente el cableado y los costos de ingeniería asociados, permitiendo el reemplazo seguro de instrumentos en caliente (live working).
+* Nota: Si su preferencia se orienta a una arquitectura tradicional, disponemos de nuestro DCS insignia SUPCON ECS-700 con tarjetas aisladas canal a canal AI721-S (muestreo rápido a 300 ms) y protección anticorrosión G3 de fábrica.
 
-3. Robustecimiento de la Red de Control (Cierre de Anillo de Fibra Óptica):
-Hemos tomado nota de la indicación en su plano sobre el "Tramo Faltante de Fibra Óptica entre la Sala Cal y la Sala CAS". Esta discontinuidad impide el cierre del anillo físico de comunicaciones, dejando a la planta sin redundancia ante cortes de fibra o fallos de switches en esa sección. Ponemos a su disposición nuestra capacidad de integración para suministrar e instalar este tramo de fibra óptica y configurar los protocolos de redundancia industrial necesarios para asegurar que su red de control cuente con una tolerancia a fallas de nivel de clase mundial.
+3. Reemplazo del Sistema Experto (FLSmidth PXP) e Inteligencia de Activos
+Ofrecemos la suite de optimización avanzada SUPCON APC-Cement montada sobre el sistema operativo industrial supOS:
+* Utiliza algoritmos de Control Predictivo Multivariable (MPC) para optimizar el horno H9 y los molinos 21/22 de forma autónoma, asegurando aumentos de producción de hasta el 8% y ahorro de energía.
+* Integra el módulo de inteligencia PRIDE, el cual realiza un diagnóstico predictivo online de obstrucciones en las cañerías de impulso de sus transmisores de presión CXT y analiza la fricción de sus válvulas de control equipadas con posicionadores inteligentes SUPCON CVP2000.
 
-Le propongo que agendemos una sesión técnica virtual de 30 minutos la próxima semana para revisar estos puntos y presentarle nuestras tecnologías aplicadas. ¿Tendría disponibilidad el próximo Martes a las 10:00 AM?
+4. Cierre del Anillo de Fibra Óptica
+Nos encargamos del diseño e instalación llave en mano del "Tramo Faltante de Fibra Óptica entre la Sala Cal y la Sala CAS" indicado en su plano, utilizando switches industriales gestionados de SUPCON para asegurar una recuperación redundante de red menor a 20 ms.
+
+Al contar con el soporte e ingeniería local de CONECTA, le garantizamos una implementación con plazos de entrega reducidos (frente a las habituales 14 semanas de fabricantes occidentales) y una inversión de capital altamente optimizada (entre un 10% y 30% más eficiente).
+
+Para revisar los alcances de estas tecnologías y mostrarle el panel de topología que hemos diseñado, le propongo agendar una reunión técnica de 30 minutos el próximo Martes a las 10:00 AM. ¿Le acomoda esa alternativa?
+
+Quedo atento a sus comentarios.
+
+Atentamente,
+
+Víctor Vilches
+Equipo de Automatización y Control
+SUPCON Chile</div>
+                </div>
+            </div>
+        </div>las 10:00 AM?
 
 Quedo atento a su confirmación y a sus comentarios.
 
